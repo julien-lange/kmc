@@ -1,0 +1,6 @@
+-- 2-MC
+-- stable from k>=5
+--
+P: rec x. Q!a; Q!a;  Q!a; S!z; x
+Q: rec x. S?c; P?a; P?a; P?a; x
+S: rec x. P?z; Q!c; x

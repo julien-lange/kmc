@@ -1,0 +1,7 @@
+S: {T!y; R!b; P!b; end, T!x; R!a; P!a;end, T!z;R!c;P!a;R!z;end}
+
+R: {S?a;P!a; end, S?b;P!b;end, S?c;S?z;P!b;end}
+
+T: {S?x; end, S?y;end, S?z;end}
+
+P: {R?b; S?b;end, S?b;R?b;end, S?a;{R?b;end, R?a;end}, R?a;S?a;end}

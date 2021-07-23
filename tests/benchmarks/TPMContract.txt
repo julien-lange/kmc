@@ -1,0 +1,40 @@
+-- From S Halle and T Bultan. Realizability analysis for
+-- message-based interactions using shared-state projections
+-- NB: IO_RUNNINGS1 == ReadStateS1 in Fig 8
+-- 
+--
+-- Present version adapted from
+-- J. Lange, E. Tuosto, and N. Yoshida: From Communicating
+-- Machines to Graphical Choreographies (POPL'15)
+
+-- We only comment out one one superfluous transition in each
+-- automaton to make it CSA
+
+-- C
+.outputs 
+.state graph
+ReadyState 1 ! send ReadyStateS0
+ReadyState 1 ! GetTpmStatus ReadyStateS1
+ReadyStateS0 1 ? AckStartSend IORUNNING
+IORUNNING 1 ! GetTpmStatus IORUNNINGS0
+-- IORUNNING 1 ? SendComplete ReadyState
+IORUNNINGS0 1 ? TpmStatus IORUNNING
+IORUNNINGS0 1 ? SendComplete ReadyStateS1
+ReadyStateS1 1 ? TpmStatus ReadyState
+.marking ReadyState
+.end
+
+
+-- S
+.outputs 
+.state graph
+ReadyState 0 ? send ReadyStateS0
+ReadyState 0 ? GetTpmStatus ReadyStateS1
+ReadyStateS0 0 ! AckStartSend IORUNNING
+IORUNNING 0 ? GetTpmStatus IORUNNINGS0
+-- IORUNNING 0 ! SendComplete ReadyState
+IORUNNINGS0 0 ! TpmStatus IORUNNING
+IORUNNINGS0 0 ! SendComplete ReadyStateS1
+ReadyStateS1 0 ! TpmStatus ReadyState
+.marking ReadyState
+.end

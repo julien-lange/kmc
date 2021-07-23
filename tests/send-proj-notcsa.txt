@@ -1,0 +1,10 @@
+A: {B!a; E!z; C!y; end, B!b; C!y; E!z; end}
+
+B: {A?a; end, A?b;end}
+
+C: {A?y; D?w; end}
+
+D: {E!a; C!w; end, E!b; C!w;end}
+
+E: {D?a; A?z; end, D?b; A?z;end}
+

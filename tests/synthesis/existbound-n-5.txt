@@ -1,0 +1,8 @@
+-- RTS2 has 10 states, 10 transitions with Rcv < Snd POR
+-- RTS3 has 10 states, 10 transitions with Rcv < Snd POR
+
+-- RTS2 has 12 states, 12 transitions with Length-based POR
+-- RTS3 has 10 states, 10 transitions with Length-based POR
+
+Q: rec x. P!b1; P!b2; P?a1; P?a2; P?a3; P?a4; P?a5; x
+P: rec x. Q!a1; Q!a2; Q!a3; Q!a4; Q!a5; Q?b1; Q?b2; x

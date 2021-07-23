@@ -1,0 +1,8 @@
+A: B!a;end
+
+B: end
+
+C: {D!x;end, D!y;end}
+
+D: end
+

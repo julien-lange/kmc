@@ -1,0 +1,3 @@
+A: rec t . B!a; {B?d;t, B?x;B!b;t}
+
+B: rec t . A?a; {A!d;t, A!x;A?b;t}

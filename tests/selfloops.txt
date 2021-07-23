@@ -1,0 +1,7 @@
+A: rec x . B!a; B?b; end
+
+B: rec y . A!b; A?a; end
+
+C: rec x . D!d; D?c; end
+
+D: rec y . C!c; C?d; end

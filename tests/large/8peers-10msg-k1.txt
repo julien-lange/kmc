@@ -1,0 +1,15 @@
+A: rec x. B!a;B!a;B!a;B!a;B!a;B!a;B!a;B!a;
+	  x
+B: rec x. A?a;A?a;A?a;A?a;A?a;A?a;A?a;A?a;
+	  x
+
+C: rec x. D!a;D!a;D!a;D!a;D!a;D!a;D!a;D!a;
+	  x
+D: rec x. C?a;C?a;C?a;C?a;C?a;C?a;C?a;C?a;
+	  x
+
+
+E: rec x. F!a;F!a;F!a;F!a;F!a;F!a;F!a;F!a;
+	  x 
+F: rec x. E?a;E?a;E?a;E?a;E?a;E?a;E?a;E?a;
+	  x

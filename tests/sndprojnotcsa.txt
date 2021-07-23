@@ -1,0 +1,11 @@
+A: {B!a; F!z; C!y; end, B!b; C!y; F!z; end}
+
+B: {A?a; end, A?b;end}
+
+C: {A?y; D?w; end}
+
+D: {E!a; C!w; end, E!b; C!w;end}
+
+E: {D?a; end, D?b;end}
+
+F: {A?z;end}

@@ -1,0 +1,37 @@
+-- Manager = 0
+.outputs 
+.state graph
+init 1 ? update send1
+send1 2 ! update send2
+send2 3 ! update rec1
+rec1 2 ? ok rec2
+rec2 3 ? ok rec3
+rec3 1 ! ok init
+.marking init
+.end
+
+
+-- Client = 1
+.outputs 
+.state graph
+send 0 ! update ack
+ack 0 ? ok send
+.marking send
+.end
+
+-- Node 1 = 2
+.outputs 
+.state graph
+send 0 ? update ack
+ack 0 ! ok send
+.marking send
+.end
+
+
+-- Node 2 = 3
+.outputs 
+.state graph
+send 0 ? update ack
+ack 0 ! ok send
+.marking send
+.end

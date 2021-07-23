@@ -1,0 +1,26 @@
+-- From J. Lange, E. Tuosto, and N. Yoshida: From Communicating
+-- Machines to Graphical Choreographies (POPL'15)
+
+.outputs 
+.state graph
+q0 1 ! haggle q1
+q1 1 ? price q0
+q0 1 ! happy q2
+q2 2 ! info q3
+.marking q0
+.end
+
+.outputs 
+.state graph
+q0 0 ? haggle q1
+q1 0 ! price q0
+q0 0 ? happy q2
+.marking q0
+.end
+
+.outputs 
+.state graph
+q0 0 ? info q1
+.marking q0
+.end
+

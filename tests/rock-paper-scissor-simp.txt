@@ -1,0 +1,23 @@
+.outputs 
+.state graph
+qinit 1 ! rock qrock
+qinit 1 ! paper qrock
+qinit 1 ! scissors qrock
+qrock 1 ? rock end
+qrock 1 ? paper end
+qrock 1 ? scissors end
+.marking qinit
+.end
+
+.outputs 
+.state graph
+qinit 0 ! rock qrock
+qinit 0 ! paper qrock
+qinit 0 ! scissors qrock
+qrock 0 ? rock end
+qrock 0 ? paper end
+qrock 0 ? scissors end
+.marking qinit
+.end
+
+

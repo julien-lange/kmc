@@ -1,0 +1,7 @@
+P: R!x; end
+
+Q: S!y;end
+
+R: S!a1; S!a2; P?x; end
+
+S: Q?y; R?a1; R?a2; end

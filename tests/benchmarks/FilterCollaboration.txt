@@ -1,0 +1,26 @@
+-- From D. M. Yellin and R. E. Strom. Protocol specifications and component
+-- adaptors.
+--
+-- Present version from
+-- J. Lange, E. Tuosto, and N. Yoshida: From Communicating
+-- Machines to Graphical Choreographies (POPL'15)
+
+.outputs 
+.state graph
+Stable 1 ! newFilterRequest Filter
+Filter 1 ? itemToBeFiltered Respond
+Filter 1 ? noMoreItems Stable
+Respond 1 ! ok Filter
+Respond 1 ! remove Filter
+.marking Stable
+.end
+
+.outputs 
+.state graph
+Stable 0 ? newFilterRequest Filter
+Filter 0 ! itemToBeFiltered Respond
+Filter 0 ! noMoreItems Stable
+Respond 0 ? ok Filter
+Respond 0 ? remove Filter
+.marking Stable
+.end

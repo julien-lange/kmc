@@ -1,0 +1,48 @@
+.outputs 
+.state graph
+qinit 1 ! rock qrock
+qinit 1 ! paper qpaper
+qinit 1 ! scissors qscissors
+qrock 1 ? rock tie
+qrock 1 ? paper lose
+qrock 1 ? scissors win
+qpaper 1 ? rock win
+qpaper 1 ? paper tie
+qpaper 1 ? scissors lose
+qscissors 1 ? rock lose
+qscissors 1 ? paper win
+qscissors 1 ? scissors tie
+win 2 ! win end
+tie 2 ! tie end
+.marking qinit
+.end
+
+.outputs 
+.state graph
+qinit 0 ! rock qrock
+qinit 0 ! paper qpaper
+qinit 0 ! scissors qscissors
+
+qrock 0 ? rock tie
+qrock 0 ? paper lose
+qrock 0 ? scissors win
+
+qpaper 0 ? rock win
+qpaper 0 ? paper tie
+qpaper 0 ? scissors lose
+
+qscissors 0 ? rock lose
+qscissors 0 ? paper win
+qscissors 0 ? scissors tie
+win 2 ! win end
+.marking qinit
+.end
+
+
+.outputs 
+.state graph
+q0 0 ? win q1
+q0 1 ? win q1
+q0 0 ? tie q1
+.marking q0
+.end

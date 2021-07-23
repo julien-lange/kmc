@@ -1,0 +1,27 @@
+.outputs
+.state graph
+q3 1 ! propose q5
+q5 1 ? accpt q0
+q0 1 ! confirm q4
+q5 1 ? reject q4
+q5 1 ? propose q1
+q1 1 ! accpt q2
+q2 1 ? confirm q4
+q1 1 ! reject q4
+q1 1 ! propose q5
+.marking q3
+.end
+
+.outputs
+.state graph
+q0 0 ? propose q2
+q2 0 ! accpt q3
+q3 0 ? confirm q1
+q2 0 ! reject q1
+q2 0 ! propose q4
+q4 0 ? accpt q5
+q5 0 ! confirm q1
+q4 0 ? reject q1
+q4 0 ? propose q2
+.marking q0
+.end

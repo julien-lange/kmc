@@ -1,0 +1,44 @@
+-- CL = 0
+
+
+--  We swap transitions (q1, 2 ! logout, q0c) and (q0c, 1 ! syncLogout,
+--  q0b) to make M0 CSA
+
+.outputs 
+.state graph
+q0 2 ! connect q1a
+q1a 2 ? syncAccess q1
+q1 1 ! access q1
+q1 1 ! syncLogout q0c
+q0c 2 ! logout q0b
+q0b 1 ? syncLog q0
+.marking q0
+.end
+
+-- APPLI = 1
+.outputs 
+.state graph
+q0 2 ? setup q1
+q1 0 ? access q1
+q1 0 ? syncLogout q1c
+q1c 3 ! log q0b
+q0b 0 ! syncLog q0
+.marking q0
+.end
+
+-- INT = 2
+.outputs 
+.state graph
+q0 0 ? connect q1
+q1 1 ! setup q2a
+q2a 0 ! syncAccess q2
+q2 0 ? logout q0
+.marking q0
+.end
+
+-- DB = 3
+.outputs 
+.state graph
+q0 1 ? log q0
+.marking q0
+.end

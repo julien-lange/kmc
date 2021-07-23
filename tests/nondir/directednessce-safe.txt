@@ -1,0 +1,15 @@
+-- ./KMC tests/nondir/directednessce-safe.txt 1 --debug --noreduce
+-- 1-MC but not 2-safe
+
+A: B!y;{B!v; C!u; D!x;end, D!x;C!w;B!v;end}
+
+B: C?z;A?y;A?v;end
+
+C: D!b; {D!a;{A?w; B!z;end
+              -- , A?u; B!z;end -- Safe with this one
+	      },
+	B!z; {A?u; D!a;end,
+	      A?w; D!a;end}}
+
+D: A?x;C?b;C?a;end
+

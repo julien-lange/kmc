@@ -1,0 +1,5 @@
+Q: {R!a; P!x; end, R!b; P!y;end}
+
+P: {Q?y; R!v; end, Q?x; R!v; end}
+
+R: P?v; {Q?a; end, Q?b; end}

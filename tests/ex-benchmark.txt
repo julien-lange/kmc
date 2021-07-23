@@ -1,0 +1,68 @@
+-- X:1 Y:3 P:6
+.outputs 
+.state graph
+qs0 1 ! a qs1
+qs1 1 ! a qs2
+qs2 1 ! a qs3
+qs3 1 ? a qr1
+qr1 1 ? a qr2
+qr2 1 ? a qr3
+.marking qs0
+.end
+
+.outputs 
+.state graph
+qs0 0 ! a qs1
+qs1 0 ! a qs2
+qs2 0 ! a qs3
+qs3 0 ? a qr1
+qr1 0 ? a qr2
+qr2 0 ? a qr3
+.marking qs0
+.end
+
+.outputs 
+.state graph
+qs0 3 ! a qs1
+qs1 3 ! a qs2
+qs2 3 ! a qs3
+qs3 3 ? a qr1
+qr1 3 ? a qr2
+qr2 3 ? a qr3
+.marking qs0
+.end
+
+.outputs 
+.state graph
+qs0 2 ! a qs1
+qs1 2 ! a qs2
+qs2 2 ! a qs3
+qs3 2 ? a qr1
+qr1 2 ? a qr2
+qr2 2 ? a qr3
+.marking qs0
+.end
+
+.outputs 
+.state graph
+qs0 5 ! a qs1
+qs1 5 ! a qs2
+qs2 5 ! a qs3
+qs3 5 ? a qr1
+qr1 5 ? a qr2
+qr2 5 ? a qr3
+.marking qs0
+.end
+
+.outputs 
+.state graph
+qs0 4 ! a qs1
+qs1 4 ! a qs2
+qs2 4 ! a qs3
+qs3 4 ? a qr1
+qr1 4 ? a qr2
+qr2 4 ? a qr3
+.marking qs0
+.end
+
+

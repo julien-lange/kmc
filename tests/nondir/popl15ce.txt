@@ -1,0 +1,4 @@
+A: {B!a;C!cp;B?b;B!y;end, C!c;B?b;B!a;B?x;end}
+B: {A?a;C?dp;A!b;A?y;end, C?d;A!b;A?a;A!x;end}
+C: {A?c;{B!d;end, B!dp;end}, A?cp; {B!d;end, B!dp;end}}
+

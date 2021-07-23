@@ -1,0 +1,41 @@
+-- Ng and Yoshida - CC16 / Listing 3 (Fig 5)
+
+-- 0
+.outputs 
+.state graph
+q0 3 ? int q1
+q1 4 ! int q0
+.marking q0
+.end
+
+-- 1
+.outputs 
+.state graph
+q0 4 ? int q1
+q1 2 ! int q0
+.marking q0
+.end
+
+-- 2
+.outputs 
+.state graph
+q0 1 ? int q1
+.marking q0
+.end
+
+
+-- 3
+.outputs 
+.state graph
+q0 0 ! int q1
+.marking q0
+.end
+
+-- 4
+.outputs 
+.state graph
+q0 0 ? int q1
+q1 1 ! int q2
+.marking q0
+.end
+

@@ -1,0 +1,38 @@
+.outputs 
+.state graph
+alice0 1 ! bwin alice1
+alice0 1 ! cwin alice1
+alice1 1 ? sig alice2
+alice2 2 ? msg alice4
+alice4 3 ! free alice0
+.marking alice0
+.end
+
+.outputs 
+.state graph
+bob0 0 ? bwin bob1
+bob1 2 ! lose bob2
+bob0 0 ? cwin bob3
+bob3 2 ! win bob2
+bob2 0 ! sig bob0
+.marking bob0
+.end
+
+.outputs 
+.state graph
+carol0 3 ! busy carol2
+carol2 1 ? lose carol5
+carol2 1 ? win carol5
+carol5 0 ! msg carol0
+.marking carol0
+.end
+
+.outputs 
+.state graph
+dave0 2 ? busy dave1
+dave1 0 ? free dave0
+.marking dave0
+.end
+
+
+

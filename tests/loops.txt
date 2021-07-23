@@ -1,0 +1,7 @@
+A: rec x . { B!a; {B?d; end, B?b;x}
+       	   , B!c; {B?d; end, B?b;end}
+	   }
+
+B: rec x . { A!b; {A?c; end, A?a;x}
+       	   , A!d; {A?c; end, A?a;end}
+	   }

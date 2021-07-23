@@ -1,0 +1,60 @@
+-- This is not CSA due to P=1, since it expects receive from different
+--  machines
+
+-- HS = 0
+.outputs 
+.state graph
+s1 1 ? sendData s2
+s2 2 ! subscribed s3
+s3 2 ? nok s6
+s6 1 ! notSubscribed s1
+s3 2 ? ok s4
+s4 3 ! account s5
+s5 3 ? logCreated s7
+s7 4 ! fwd s8
+s8 4 ? fwdOk s1
+.marking s1
+.end
+
+-- P = 1
+.outputs 
+.state graph
+s1 0 ! sendData s2
+s2 0 ? notSubscribed s1
+s2 5 ? provideService s1
+.marking s1
+.end
+
+-- SS = 2 
+.outputs 
+.state graph
+s1 0 ? subscribed s2
+s2 0 ! nok s1
+s2 0 ! ok s1
+.marking s1
+.end
+
+-- AS = 3
+.outputs 
+.state graph
+s1 0 ? account s2
+s2 0 ! logCreated s1
+.marking s1
+.end
+
+-- T = 4
+.outputs 
+.state graph
+s1 0 ? fwd s2
+s2 0 ! fwdOk s3
+s3 5 ! helpReq s1
+.marking s1
+.end
+
+-- ES = 5
+.outputs 
+.state graph
+s1 4 ? helpReq s2
+s2 1 ! provideService s1
+.marking s1
+.end

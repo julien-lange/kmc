@@ -1,0 +1,4 @@
+A:  {B!b;{B!c;end, B!e;{B?e;end, B?d;end, B?c;end, B?b;end}}, B!a;{B!f;end, B!g;end}}
+B:  {A?b;{A?c;end, A?e;{A!e;end, A!d;end, A!c;end, A!b;end}}, A?a;{A?f;end, A?g;end}}
+C:  {D!b;{D!c;end, D!e;{D?e;end, D?d;end, D?c;end, D?b;end}}, D!a;{D!f;end, D!g;end}}
+D:  {C?b;{C?c;end, C?e;{C!e;end, C!d;end, C!c;end, C!b;end}}, C?a;{C?f;end, C?g;end}}

@@ -1,0 +1,4 @@
+A: B!a; B!a; end
+B: end
+C: rec x . D!x; x
+D: rec x . C?x; x

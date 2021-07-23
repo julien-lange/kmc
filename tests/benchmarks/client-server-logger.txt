@@ -1,0 +1,30 @@
+.outputs 
+.state graph
+q0 1 ! req q1
+q1 1 ! data q2
+q2 1 ? ko q0
+q2 1 ? error q3
+q2 1 ? ok q4
+.marking q0 -- <-- initial state
+.end
+
+
+.outputs 
+.state graph
+q0 0 ? req q1
+q1 0 ! ko q2
+q2 0 ? data q0
+q1 0 ! ok q3
+q3 0 ? data q4
+q4 2 ! log q4
+.marking q0  -- <-- initial state
+.end
+
+
+.outputs 
+.state graph
+q0 1 ? log q0
+.marking q0  -- <-- initial state
+.end
+
+

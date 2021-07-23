@@ -1,0 +1,25 @@
+-- From "Multiparty Compatibility for Concurrent Objects"
+
+TL: rec  x . {DT?releaseCandidate;
+		 B!evaluate;
+		 { B?iterate; R!tagRC; DT!continue; x
+		 , B?accept; R!tagRelease; DT!stop; end
+		 , B?discard; R!revert; DT!continue; x
+		 }
+		 }
+
+DT: rec x . R!commit; R?revision;
+                 TL!releaseCandidate;
+                 { TL?continue; x
+		 , TL?stop; end}
+
+
+
+
+R: rec x . DT?commit; DT!revision;
+       	       { TL?tagRC; x
+	       , TL?tagRelease; end
+	       }
+
+B: rec x . TL?evaluate; { TL!accept; end
+                                  , TL!iterate; x}

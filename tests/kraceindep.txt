@@ -1,0 +1,11 @@
+P: Q!a1; Q!a2; R!c; end
+
+Q: {P?a1; P?a2; end, R?ddd; V!x; end}
+
+R: R?c;   {T?x; Q!ddd; end}
+
+S: T!b1; T!b2; V!e; end
+
+T: {S?b1;S?b2;end, V?fff;R!x;end}
+
+V: S?e;  T!fff; end

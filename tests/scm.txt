@@ -1,0 +1,22 @@
+automaton sender :
+
+initial : 0
+
+state 0 :
+to 1 :  when true , 0 ! o  ;
+
+state 1 :
+to 0 :  when true , 0 ! c ;
+to 0 :  when true , 1 ? d ;
+
+
+automaton receiver :
+
+initial : 0
+
+state 0 :
+to 1 :  when true , 0 ? o ;
+
+state 1 :
+to 0 :  when true , 0 ? c ;
+to 0 :  when true , 1 ! d ;

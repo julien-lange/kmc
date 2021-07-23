@@ -1,0 +1,15 @@
+.outputs
+.state graph
+q0 1 ! fibonacci q2
+q2 1 ? fibonacci q0
+q0 1 ! stop q1
+.marking q0
+.end
+
+.outputs
+.state graph
+q0 0 ? fibonacci q2
+q2 0 ! fibonacci q0
+q0 0 ? stop q1
+.marking q0
+.end

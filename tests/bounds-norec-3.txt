@@ -1,0 +1,35 @@
+-- Stabilises with k=4
+-- 3-MC
+
+A: rec x .
+   B!ab;B!ab;B!ab;B!ab;
+   D!ad;D!ad;D!ad;D!ad;
+   C?ca;C?ca;C?ca;
+   B?ba;B?ba;B?ba;
+   D?da;D?da;D?da;
+   end
+
+B: rec x .
+   A!ba;A!ba;A!ba;
+   D!bd;D!bd;D!bd;
+   C?cb;C?cb;C?cb;
+   A?ab;A?ab;A?ab;A?ab;
+   D?db;D?db;D?db;
+   end
+
+
+C: rec x .
+   B!cb;B!cb;B!cb;
+   D!cd;D!cd;D!cd;
+   A!ca;A!ca;A!ca;
+   D?dc;D?dc;D?dc;
+   end
+
+D: rec x .
+   C!dc;C!dc;C!dc;
+   A!da;A!da;A!da;
+   B!db;B!db;B!db;
+   C?cd;C?cd;C?cd;
+   A?ad;A?ad;A?ad;A?ad;
+   B?bd;B?bd;B?bd;
+   end

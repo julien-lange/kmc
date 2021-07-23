@@ -1,0 +1,6 @@
+C: rec x . S!req;S!data; {S?ko;x, S?ok;end, S?err;end}
+
+S: rec x . C?req; { C!ko;C?data;x
+       	   	  , C!ok;C?data; rec y. L!log;y}
+
+L: rec y. S?log;y

@@ -1,0 +1,34 @@
+.outputs
+.state graph
+q0 1 ? Query q2
+q2 1 ! Quote q3
+q3 2 ! Dummy q0
+q0 1 ? Yes q4
+q4 2 ! Yes q5
+q5 1 ? Bye q1
+q0 1 ? No q6
+q6 2 ! No q5
+.marking q0
+.end
+
+.outputs
+.state graph
+q3 0 ! Query q5
+q5 0 ? Quote q3
+q3 0 ! Yes q0
+q0 2 ! Payment q1
+q1 2 ? Ack q2
+q2 0 ! Bye q4
+q3 0 ! No q2
+.marking q3
+.end
+
+.outputs
+.state graph
+q0 0 ? Dummy q0
+q0 0 ? Yes q2
+q2 1 ? Payment q3
+q3 1 ! Ack q1
+q0 0 ? No q1
+.marking q0
+.end

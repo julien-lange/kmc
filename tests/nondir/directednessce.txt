@@ -1,0 +1,8 @@
+A: B!y;{B!v;D!x;end, D!x;C!w;B!v;end}
+
+B: C?z;A?y;A?v;end
+
+C: D!b; {D!a;A?w;B!z;end, B!z;D!a;end}
+
+D: A?x;C?b;C?a;end
+

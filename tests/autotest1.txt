@@ -1,0 +1,51 @@
+.outputs 
+.state graph
+qs0 1 ! a qs1
+qs0 1 ! b qs1
+qs1 1 ! a qs2
+qs1 1 ! b qs2
+qs2 1 ? a qr1
+qs2 1 ? b qr1
+qr1 1 ? a qs0
+qr1 1 ? b qs0
+.marking qs0
+.end
+
+.outputs 
+.state graph
+qs0 0 ! a qs1
+qs0 0 ! b qs1
+qs1 0 ! a qs2
+qs1 0 ! b qs2
+qs2 0 ? a qr1
+qs2 0 ? b qr1
+qr1 0 ? a qs0
+qr1 0 ? b qs0
+.marking qs0
+.end
+
+.outputs 
+.state graph
+qs0 3 ! a qs1
+qs0 3 ! b qs1
+qs1 3 ! a qs2
+qs1 3 ! b qs2
+qs2 3 ? a qr1
+qs2 3 ? b qr1
+qr1 3 ? a qs0
+qr1 3 ? b qs0
+.marking qs0
+.end
+
+.outputs 
+.state graph
+qs0 2 ! a qs1
+qs0 2 ! b qs1
+qs1 2 ! a qs2
+qs1 2 ! b qs2
+qs2 2 ? a qr1
+qs2 2 ? b qr1
+qr1 2 ? a qs0
+qr1 2 ? b qs0
+.marking qs0
+.end

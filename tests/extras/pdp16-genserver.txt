@@ -1,0 +1,57 @@
+-- C
+.outputs 
+.state graph
+start 1 ! start starting
+starting 1 ? error start
+starting 1 ? ok running
+running 1 ! cast running
+running 1 ! call calling
+calling 1 ? reply running
+calling 1 ? error start
+calling 2 ? reply running
+.marking start
+.end
+
+-- L
+.outputs
+.state graph
+start 0 ? start q1
+q1 2 ! handleInit q2
+q2 2 ? stop q3
+q2 2 ? ok q3a
+q3 0 ! error start
+q3a 0 ! ok running
+running 0 ? call q7
+q7 2 ! handleCall calling
+calling 2 ? noreply running
+calling 2 ? stop q12
+calling 2 ? reply q9
+q9 0 ! reply running
+q12 0 ! error stopping
+stopping 2 ! terminate q120
+q120 2 ? term start
+running 0 ? cast q11
+q11 2 ! handleCast casting
+casting 2 ? stop stopping
+casting 2 ? noreply running
+.marking start
+.end
+
+-- S
+.outputs 
+.state graph
+start 1 ? handleInit q1
+q1 1 ! stop start
+q1 1 ! ok running
+running 1 ? handleCast casting
+running 1 ? handleCall calling
+casting 1 ! noreply running
+casting 1 ! stop stopping
+calling 1 ! reply running
+calling 0 ! reply q3
+q3 1 ! noreply running
+calling 1 ! stop stopping
+stopping 1 ? terminate q5
+q5 1 ! term start
+.marking start
+.end

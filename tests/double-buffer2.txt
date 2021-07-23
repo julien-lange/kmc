@@ -1,0 +1,3 @@
+K: rec x . SO!r1; SO!r2; SI!u1; SI!u2; SO?s1; SO?s2; SI?t1; SI?t2;x
+SO: rec x . K?r1; K?r2; K!s1; K!s2;x
+SI: rec x . K!t1; K!t2; K?u1; K?u2;x

@@ -1,0 +1,10 @@
+A: rec x . B?guess;C?guess; { C!win; x
+                   	    , C!lose;x}
+
+B: rec x . A!guess;C!tell;C?tell; { C?win; x
+          	                  , C?lose;x}
+
+C: rec x . A!guess;B!tell;B?tell; { A?win; B!lose;x
+       	                          , A?lose; B!win;x}
+
+   

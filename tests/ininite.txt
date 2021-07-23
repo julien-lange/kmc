@@ -1,0 +1,3 @@
+A: rec x . B!a;B!a;B!a; C!b; x 
+B: rec y . C?c;A?a;  y
+C: rec z . A?b; B!c; z

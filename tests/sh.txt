@@ -1,0 +1,44 @@
+.outputs
+.state graph
+q0 1 ? BothOut q0
+q0 1 ? Close q1
+q0 1 ? SecIn q0
+q0 1 ? BothIn q0
+q0 1 ? SecOut q0
+.marking q0
+.end
+
+.outputs
+.state graph
+q0 2 ! Plane q2
+q2 2 ! IsAbove q3
+q3 2 ? Res q4
+q4 2 ! IsAbove q5
+q5 2 ? Res q6
+q6 2 ! Intersct q7
+q7 2 ? Res q8
+q8 0 ! SecIn q2
+q8 0 ! SecOut q2
+q6 2 ! BothIn q9
+q9 0 ! BothIn q2
+q6 2 ! BothOut q10
+q10 0 ! BothOut q2
+q2 2 ! Close q11
+q11 0 ! Close q1
+.marking q0
+.end
+
+.outputs
+.state graph
+q0 1 ? Plane q2
+q2 1 ? IsAbove q3
+q3 1 ! Res q4
+q4 1 ? IsAbove q5
+q5 1 ! Res q6
+q6 1 ? BothOut q2
+q6 1 ? Intersct q7
+q7 1 ! Res q2
+q6 1 ? BothIn q2
+q2 1 ? Close q1
+.marking q0
+.end

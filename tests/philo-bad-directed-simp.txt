@@ -1,0 +1,81 @@
+-- FORK 0
+.outputs 
+.state graph
+qinit 7 ! right qrighta
+qrighta 7 ? down qinit
+qinit 1 ! left qlefta
+qlefta 1 ? down qinit
+.marking qinit
+.end
+
+-- PHILO 1
+.outputs 
+.state graph
+qinit 0 ? left qlefta
+qrighta 0 ! down qleftd
+qlefta  2 ? right qrighta
+qleftd	2 ! down qinit
+.marking qinit
+.end
+
+-- FORK 2
+.outputs 
+.state graph
+qinit 1 ! right qrighta
+qrighta 1 ? down qinit
+qinit 3 ! left qlefta
+qlefta 3 ? down qinit
+.marking qinit
+.end
+
+-- PHILO 3
+.outputs 
+.state graph
+qinit 2 ? left qlefta
+qrighta 2 ! down qleftd
+qlefta  4 ? right qrighta
+qleftd	4 ! down qinit
+.marking qinit
+.end
+
+
+-- FORK 4
+.outputs 
+.state graph
+qinit 3 ! right qrighta
+qrighta 3 ? down qinit
+qinit 5 ! left qlefta
+qlefta 5 ? down qinit
+.marking qinit
+.end
+
+-- PHILO 5
+.outputs 
+.state graph
+qinit 4 ? left qlefta
+qrighta 4 ! down qleftd
+qlefta  6 ? right qrighta
+qleftd	6 ! down qinit
+.marking qinit
+.end
+
+
+-- FORK 6
+.outputs 
+.state graph
+qinit 5 ! right qrighta
+qrighta 5 ? down qinit
+qinit 7 ! left qlefta
+qlefta 7 ? down qinit
+.marking qinit
+.end
+
+-- PHILO 7
+.outputs 
+.state graph
+qinit 6 ? left qlefta
+qrighta 6 ! down qleftd
+qlefta  0 ? right qrighta
+qleftd	0 ! down qinit
+.marking qinit
+.end

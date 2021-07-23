@@ -1,0 +1,5 @@
+A: rec t. {B!a;{B?x;t, B?d;t}, B!b;{B?x;t, B?d;t}}
+
+B: rec t. {A?a;{A!x;t, A!d;t}, A?b;{A!x;t, A!d;t}}
+
+

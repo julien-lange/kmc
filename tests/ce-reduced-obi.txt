@@ -1,0 +1,21 @@
+-- CL = 0
+.outputs 
+.state graph
+q1 1 ! ACCESS q1
+q1 2 ! LOGOUT q0c
+.marking q1
+.end
+
+-- APPLI = 1
+.outputs 
+.state graph
+q0 0 ? ACCESS q0
+.marking q0
+.end
+
+-- INT = 2
+.outputs 
+.state graph
+q2 0 ? LOGOUT q10
+.marking q2
+.end

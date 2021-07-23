@@ -1,0 +1,50 @@
+-- From "Multiparty Compatibility for Concurrent Objects" (CFSM version)
+
+-- 0  TL
+.outputs 
+.state graph
+q0 1 ? releaseCandidate q1
+q1 3 ! evaluate q2
+q2 3 ? iterate q3
+q3 2 ! tagRC q4
+q4 1 ! continue q0
+q2 3 ? accept q5
+q5 2 ! tagRelease q6
+q6 1 ! stop q7
+q2 3 ? discard q8
+q8 2 ! revert q9
+q9 1 ! continue q0
+.marking q0
+.end
+
+--  1 DT
+.outputs 
+.state graph
+q0 2 ! commit q1
+q1 2 ? revision q2
+q2 0 ! releaseCandidate q4
+q4 0 ? continue q0
+q4 0 ? stop q5
+.marking q0
+.end
+
+
+--  2 -- R
+.outputs 
+.state graph
+q0 1 ? commit q1
+q1 1 ! revision q2
+q2 0 ? tagRC q0
+q2 0 ? tagRelease q5
+.marking q0
+.end
+
+
+--  3 -- B
+.outputs 
+.state graph
+q0 0 ? evaluate q1
+q1 0 ! accept q2
+q1 0 ! iterate q0
+.marking q0
+.end

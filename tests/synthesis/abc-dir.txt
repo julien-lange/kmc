@@ -1,0 +1,30 @@
+.outputs
+.state graph
+q0 1 ! a q0
+q0 2 ! x q1
+q1 1 ? c q2
+q2 1 ? c q2
+.marking q0
+.end
+
+.outputs
+.state graph
+q0 0 ! c q0
+q0 3 ! y q1
+q1 0 ? a q2
+q2 0 ? a q2
+.marking q0
+.end
+
+
+.outputs
+.state graph
+q0 0 ? x q1
+.marking q0
+.end
+
+.outputs
+.state graph
+q0 1 ? y q1
+.marking q0
+.end

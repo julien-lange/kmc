@@ -1,0 +1,4 @@
+A: C!x; end
+B: D!y; end
+C: D!a1; D!a2; A?x;end
+D: B?y; C?a1; C?a2;end 

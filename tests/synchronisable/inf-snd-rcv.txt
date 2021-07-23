@@ -1,0 +1,25 @@
+-- Somewhat adapted from Figure 10
+-- not k-exhaustive for any k?
+
+
+-- p = 0
+.outputs 
+.state graph
+q0 1 ! a q0
+q0 1 ! b q1
+q1 1 ? c q1
+q1 1 ? d q2
+.marking q0
+.end
+
+
+-- q = 1
+.outputs 
+.state graph
+q0 0 ! c q0
+q0 0 ! d q1
+q1 0 ? a q1
+q1 0 ? b q2
+.marking q0
+.end
+

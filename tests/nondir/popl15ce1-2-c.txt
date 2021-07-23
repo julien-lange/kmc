@@ -1,0 +1,5 @@
+A: {B!a;B!a;C!c;B?b;B!y;end, C!c;B?b;B!a;B!a;B?x;end}
+
+B: {A?a;A?a;C?d;A!b;A?y;end, C?d;A!b;A?a;A?a;A!x;end}
+
+C: A?c;B!d;end

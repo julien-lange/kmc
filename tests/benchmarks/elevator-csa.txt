@@ -1,0 +1,45 @@
+-- Adapted from Fig 3
+-- this system is 1-MC
+
+-- User = 0
+.outputs 
+.state graph
+loop 2 ! openDoor loop
+loop 2 ! closeDoor loop
+.marking loop
+.end
+
+
+-- Door = 1
+.outputs 
+.state graph
+init 2 ? reset init
+init 2 ? stop init
+init 2 ? open opendoor
+init 2 ? close closing
+opendoor 2 ! doorOpened resetdoor
+closing 2 ! doorClosed resetdoor
+-- stopdoor 2 ! doorStopped opendoor
+resetdoor 2 ? open resetdoor
+resetdoor 2 ? close resetdoor
+resetdoor 2 ? stop resetdoor
+resetdoor 2 ? reset init
+.marking init
+.end
+
+-- Elevator = 2
+.outputs 
+.state graph
+closed1 1 ! reset closed2
+closed2 0 ? closeDoor closed2
+closed2 0 ? openDoor opening1
+opening1 1 ! open opening2
+opening2 1 ? doorOpened opened
+opened 1 ! reset closing1
+closing1 1 ! close stopping1
+stopping1 1 ! stop stopping2
+stopping2 1 ? doorStopped opening1 -- change target to opening1
+stopping2 1 ? doorOpened opened
+stopping2 1 ? doorClosed closed1
+.marking closed1
+.end

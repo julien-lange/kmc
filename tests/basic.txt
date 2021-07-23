@@ -1,0 +1,5 @@
+A: B!a;end
+B: A?a;end
+
+C: D!c;end
+D: C?c;end

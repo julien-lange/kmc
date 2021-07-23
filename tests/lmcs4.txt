@@ -1,0 +1,3 @@
+A: {B!m;{B?r;end, B?s;end, B?u;end}, B!p;end}
+
+B: {A!r;{A?m;end, A?p;end, A?q;end}, A!s;{A?m;end, A?p;end}}

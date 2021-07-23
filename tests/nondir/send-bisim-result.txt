@@ -1,0 +1,9 @@
+S: P!b; end
+
+P: { Q!a;S?b;R!c;end
+   , S?b;Q!a;R!c;end
+    }
+
+Q:  P?a; R?d; end
+
+R: P?c; Q!d; end

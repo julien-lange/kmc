@@ -1,0 +1,57 @@
+.outputs
+.state graph
+q0 1 ! REQUESTL q2
+q2 1 ! HOST q2
+q2 1 ! USERA q2
+q2 1 ! ACCEPT q2
+q2 1 ! ACCEPTL q2
+q2 1 ! ACCEPTE q2
+q2 1 ! DNT q2
+q2 1 ! CONNECTION q2
+q2 1 ! UPGRADEIR q2
+q2 1 ! BODY q3
+q3 1 ? HTTPV q4
+q4 1 ? 200 q5
+q5 1 ? DATE q5
+q5 1 ? SERVER q5
+q5 1 ? STRICTTS q5
+q5 1 ? LASTM q5
+q5 1 ? ETAG q5
+q5 1 ? ACCEPTR q5
+q5 1 ? CONTENTL q5
+q5 1 ? VARY q5
+q5 1 ? CONTENTT q5
+q5 1 ? VIA q5
+q5 1 ? BODY q1
+q4 1 ? 404 q5
+.marking q0
+.end
+
+.outputs
+.state graph
+q0 0 ? REQUESTL q2
+q2 0 ? HOST q2
+q2 0 ? USERA q2
+q2 0 ? ACCEPT q2
+q2 0 ? ACCEPTL q2
+q2 0 ? ACCEPTE q2
+q2 0 ? DNT q2
+q2 0 ? CONNECTION q2
+q2 0 ? UPGRADEIR q2
+q2 0 ? BODY q3
+q3 0 ! HTTPV q4
+q4 0 ! 200 q5
+q5 0 ! DATE q5
+q5 0 ! SERVER q5
+q5 0 ! STRICTTS q5
+q5 0 ! LASTM q5
+q5 0 ! ETAG q5
+q5 0 ! ACCEPTR q5
+q5 0 ! CONTENTL q5
+q5 0 ! VARY q5
+q5 0 ! CONTENTT q5
+q5 0 ! VIA q5
+q5 0 ! BODY q1
+q4 0 ! 404 q5
+.marking q0
+.end

@@ -1,0 +1,66 @@
+-- From BPMN Choreography Specification
+-- 
+--
+-- Present version adapted from
+-- J. Lange, E. Tuosto, and N. Yoshida: From Communicating
+-- Machines to Graphical Choreographies (POPL'15)
+
+
+-- We slightly revise Supplier so that it loops over
+-- ProvideItem/DeliverItem with Shipper, then Consignee (instead of
+-- interleaving both)
+--
+-- We also change Consignee so that I receives notification from Supplier
+
+
+-- Supplier = 0
+.outputs 
+.state graph
+q0 1 ! PlannedOrderVariations q1
+q1 1 ? OrderDeliveryVariations q2
+q2 1 ? DeliverCheckPointRequest q3
+q3 3 ! ProvideItem q4
+q4 3 ? DeliverItem q3
+q3 3 ! ShippingDone q6
+q6 2 ! ProvideItem q5
+q5 2 ? DeliverItem q6
+q6 2 ! ConfirmationofDeliverySchedule q7
+q7 1 ! UpdatePOandDeliverySchedule q8
+q8 1 ? POandDeliveryScheduleMods q9
+q9 1 ? AcceptPOandDeliverySchedule q10
+q10 1 ! FinalizedPOandDeliverySchedule q11
+.marking q0
+.end
+
+
+-- Retailer = 1
+.outputs
+.state graph
+q0 0 ? PlannedOrderVariations q1
+q1 0 ! OrderDeliveryVariations q2
+q2 0 ! DeliverCheckPointRequest q3
+q3 0 ? UpdatePOandDeliverySchedule q8
+q8 0 ! POandDeliveryScheduleMods q9
+q9 0 ! AcceptPOandDeliverySchedule q10
+q10 0 ? FinalizedPOandDeliverySchedule q11
+.marking q0
+.end
+
+-- Consignee = 2
+.outputs
+.state graph
+q0 0 ? ProvideItem q1
+q0 0 ? ConfirmationofDeliverySchedule q2
+q1 0 ! DeliverItem q0
+.marking q0
+.end
+
+
+-- Shipper = 3
+.outputs
+.state graph
+q0 0 ? ProvideItem q1
+q0 0 ? ShippingDone q2
+q1 0 ! DeliverItem q0
+.marking q0
+.end

@@ -1,0 +1,3 @@
+A: {B!x;end, B!y;end}
+B: {A?x;C!a;end, A?y;end}
+C: {B?a;end}

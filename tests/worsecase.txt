@@ -1,0 +1,7 @@
+A: rec x . {B!a; {B?a;x, B?b;x}, B!b; {B?a;x, B?b;x}}
+
+B: rec x . {A!a; {A?a;x, A?b;x}, A!b; {A?a;x, A?b;x}}
+
+C: rec x . {D!a; {D?a;x, D?b;x}, D!b; {D?a;x, D?b;x}}
+
+D: rec x . {C!a; {C?a;x, C?b;x}, C!b; {C?a;x, C?b;x}}

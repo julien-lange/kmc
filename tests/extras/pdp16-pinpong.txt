@@ -1,0 +1,15 @@
+.outputs
+.state graph
+q0 1 ! ping q1
+q1 1 ? pong q0
+q0 1 ! finished q2
+.marking q0
+.end
+
+.outputs
+.state graph
+q0 0 ? ping q1
+q1 0 ! pong q0
+q0 0 ? finished q2
+.marking q0
+.end

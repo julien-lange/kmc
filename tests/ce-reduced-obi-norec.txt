@@ -1,0 +1,9 @@
+B: A?b1;A?b2;end
+
+C: A?c;end
+
+D: A?d;end
+
+A: B!b1;C!c;
+	{ B!b2;end
+	, D!d;end}

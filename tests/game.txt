@@ -1,0 +1,11 @@
+A: rec x . { C!win;  B?sig; C?msg; D!free;x
+           , C!lose; B?sig; C?msg; D!free;x}
+
+B: rec x . { C?win;  A!sig; x
+           , C?lose; A!sig; x}
+
+C: rec x .{ A?win; B!lose;  D!busy; A!msg;x
+          , A?lose;  D!busy; B!win;  A!msg;x}
+
+D: rec x . {A?free; C?busy; x}
+   

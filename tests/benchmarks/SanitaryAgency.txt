@@ -1,0 +1,68 @@
+-- From G. Salaun, L. Bordeaux, and M. Schaerf. Describing and
+-- reasoning on web services using process algebra.
+-- 
+--
+-- Present version adapted from
+-- J. Lange, E. Tuosto, and N. Yoshida: From Communicating
+-- Machines to Graphical Choreographies (POPL'15)
+
+-- We only comment out one one superfluous interleaving of receive
+-- actions in Bank to make it CSA
+
+
+-- Citizen = 0
+.outputs 
+.state graph
+q0 1 ! request q1
+q1 1 ? askInfo q2
+q2 1 ! provInf q3
+q3 1 ? refusal q0
+q3 1 ? acceptance q4
+q4 2 ? provT q5
+q4 2 ? provM q5
+q5 3 ! paymentPrivateFee q0
+.marking q0
+.end
+
+-- SanitaryAgency = 1
+.outputs 
+.state graph
+q0 0 ? request q1
+q1 0 ! askInfo q2
+q2 0 ? provInf q3
+q3 0 ! refusal q0
+q3 0 ! acceptance q4
+q4 2 ! req q5
+q5 3 ! paymentPublicFee q6
+q6 3 ? done q0
+.marking q0
+.end
+
+-- Coop = 2 
+.outputs 
+.state graph
+q0 1 ? req q0a
+q0a 0 ! provT q1T
+q1T 3 ! recMoneyPossT q2T
+q2T 3 ? paymentT q0
+q0a 0 ! provM q1M
+q1M 3 ! recMoneyPossM q2M
+q2M 3 ? paymentM q0
+.marking q0
+.end
+
+
+-- Bank = 3
+.outputs 
+.state graph
+q0 2 ? recMoneyPossT q1
+q1 2 ! paymentT q1M
+q0 2 ? recMoneyPossM q5
+q5 2 ! paymentM q1M
+-- q1M 0 ? paymentPrivateFee q2M
+-- q2M 1 ? paymentPublicFee q4
+q1M 1 ? paymentPublicFee q5M
+q5M 0 ? paymentPrivateFee q4
+q4 1 ! done q0
+.marking q0
+.end

@@ -1,0 +1,3 @@
+A: B!a; B!b; B!d; end
+
+B: A?a; end

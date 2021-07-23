@@ -1,0 +1,2 @@
+P: rec x . Q!a; Q?c; Q!b; Q?d; x
+Q: rec x . P!c; P!d; P?a; P?b; x

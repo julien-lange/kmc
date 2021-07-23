@@ -1,0 +1,45 @@
+-- p == 0
+.outputs 
+.state graph
+q0 1 ! a q1
+q0 1 ! b q2
+q2 1 ! c q1
+.marking q0
+.end
+
+
+-- q == 1
+.outputs 
+.state graph
+q0 0 ? a q1
+q1 2 ! a q2
+q2 3 ! a q3
+q0 0 ? b q4
+q4 2 ! a q5
+q5 0 ? c q2
+.marking q0
+.end
+
+
+-- r == 2
+.outputs 
+.state graph
+q0 1 ? a q1
+q1 4 ! a q2
+.marking q0
+.end
+
+-- s == 3
+.outputs 
+.state graph
+q0 1 ? a q1
+.marking q0
+.end
+
+
+-- t == 4
+.outputs 
+.state graph
+q0 1 ? a q1
+.marking q0
+.end
