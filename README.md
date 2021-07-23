@@ -1,7 +1,7 @@
 # KMC: a tool for checking k-multiparty compatibility in communicating session automata 
 
 This is a tool that implements the theory introduced in "[_Verifying Asynchronous Interactions via
-Communicating Session Automata_](https://arxiv.org/abs/1901.09606)" by Julien Lange and Nobuko Yoshida.
+Communicating Session Automata_](https://link.springer.com/chapter/10.1007/978-3-030-25540-4_6)".
 
 
 ## Requirements:
