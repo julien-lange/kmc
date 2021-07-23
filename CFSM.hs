@@ -467,3 +467,22 @@ printSystem list = "digraph CFSMs { \n"++(helper $ M.toList list)++"} \n"
           in (header++machine++footer)++"\n"++(helper xs)
         helper [] = ""
               
+
+
+synchronise :: TS -> TS
+synchronise aut = Automaton { states = nub $ concat $ L.map (\x -> [fst x, snd . snd $ x]) ntrans
+                            , sinit = sinit aut
+                            , transitions = nub $ ntrans
+                            }
+  where ntrans = helper [] (sinit aut)
+        helper seen s 
+          | s `L.elem` seen = []
+          | otherwise = let current = [ (s,(x,s4)) -- [(s,(x,s2)), (s2,(y,s4))]
+                                      | (x,s2) <- successors aut s
+                                      , (y,s4) <- successors aut s2
+                                      , dual x y, direction x == Send
+                                      ]
+                            next = nub $ L.map (\x -> (snd . snd $  x)) current
+                        in (current)
+                           ++
+                           (concat $  L.map (helper (s:seen)) next)

@@ -18,7 +18,7 @@ sudo apt install haskell-platform
 sudo apt install python-matplotlib
 sudo apt install python-scipy
 cabal update
-cabal install cmdargs ansi-terminal parallel split --lib
+cabal install cmdargs ansi-terminal parallel split MissingH --lib
 ```
 
 ## Getting started (download and compile)
@@ -88,3 +88,8 @@ KMC takes the same input language as the [GMC tool](https://bitbucket.org/julien
     q0 0 ? bye q1
     .marking q0
     .end
+	
+	
+# Experimental synthesis of global graph
+
+For this you will need to have [petrify](https://www.cs.upc.edu/~jordicf/petrify/) in you PATH. 

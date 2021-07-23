@@ -44,6 +44,7 @@ data KChecker = KChecker
                 , sysfile :: FilePath
                 , bound :: Int
                 , upperbound :: Int
+                , synthesis :: Bool
                 , fsm :: Bool
                 , scm :: Bool
                 , normal :: Bool
@@ -65,6 +66,9 @@ subargs = KChecker { check = submodes
                    , sysfile = def &= argPos 0 &= typ "FILE"
                    , bound = def &= argPos 1 &= typ "INT" &= opt "1"
                    , upperbound = def &= opt "-1"  &= argPos 2 &= typ "INT"
+                   , synthesis = def 
+                                 &= explicit &= name "synthesis"
+                                 &=help "Produces a Global Graph /!\\ It might take a while to compute the send projections."
                    , fsm = def 
                              &= explicit &= name "fsm"
                              &=help "Takes CFSMs as input"
@@ -125,7 +129,7 @@ main = do createDirectoryIfMissing False outputFolder
              -- 
              -- print
              if (length blist) == 1
-               then printAll (cibi pargs) (debug pargs) (noreduce pargs) basename cfsms (head blist)
+               then printAll (cibi pargs) (debug pargs) (noreduce pargs) (synthesis pargs) basename cfsms (head blist)
                else iterativeCheck (noreduce pargs) (debug pargs) cfsms blist
 
                  
@@ -160,8 +164,8 @@ iterativeCheck nored d cfsms (bound:xs) =
           else iterativeCheck nored d cfsms xs
 
 
-printAll :: Bool -> Bool -> Bool -> String -> System -> Int -> IO ()
-printAll cibi debug red basename cfsms bound = do
+printAll :: Bool -> Bool -> Bool -> Bool -> String -> System -> Int -> IO ()
+printAll cibi debug red flag basename cfsms bound = do
   let ts = if red
            then buildTS bound cfsms
            else buildReduceTS (isBasic cfsms) bound cfsms
@@ -295,6 +299,58 @@ selectColor False =  setSGR [SetColor Foreground Vivid Red]
 mkPicture :: FilePath -> FilePath -> IO ()
 mkPicture file output =
   let cmd = "dot -Tpng "++file++" -o "++output
+  in do out <- readProcess "bash" ["-c", cmd] []
+        return ()
+
+
+
+printProjectionsDot :: System -> String -> String -> IO ()
+printProjectionsDot sys file output =
+  let dstring = printSystem sys
+      cmd =  "dot -Tpng "++file++" -o "++output
+  in do writeFile file dstring
+        out <- readProcess "bash" ["-c", cmd] []
+        return ()
+        
+
+        
+minimisemCRL2 :: Participant -> (Automaton Configuration (Maybe Label)) -> IO Machine
+minimisemCRL2 p aut = do
+  writeFile (p++"auto-tmp.fsm") (printAutomaton printMaybeLabel aut)
+  runMimimisation (p++"auto-tmp.fsm") (p++"auto-tmp.aut")
+  parsemCRL2 (p++"auto-tmp.aut")
+
+runMimimisation :: FilePath -> FilePath -> IO ()
+runMimimisation file output =
+  let cmd = "ltsconvert -eweak-trace "++file++" "++output
+      -- cmd  = "ltsconvert -eweak-bisim "++file++" "++output
+  in do out <- readProcess "bash" ["-c", cmd] []
+        return ()
+
+
+ 
+parsemCRL2 :: FilePath -> IO (Automaton State Label)
+parsemCRL2 f = do fcontent <- readFile f
+                  let flines = lines fcontent
+                      ist =  head $ splitOn "," $ head $ tail $ splitOn "(" (head flines)
+                      ntrans = L.map mkTrans $ tail flines         
+                  return $ Automaton { states = nub $ concat $ L.map (\(s,(l,t)) -> [s,t]) ntrans
+                                     , sinit = ist
+                                               --  show $ minimum $ L.map (\x -> read (fst x) :: Int) ntrans
+                                     , transitions = ntrans
+                                     }
+  where mkTrans s = let outersp = splitOn "," (init $ tail $ L.filter (/='"') s)
+                        sender = splitOn "TO" (outersp!!1)
+                    in case splitOn "SND" (sender!!1) of
+                        [x] -> let msg = splitOn "RCV" (sender!!1)
+                               in (outersp!!0, ((sender!!0,msg!!0,Receive,msg!!1),outersp!!2))
+                        (x:y:xs) -> (outersp!!0, ((sender!!0,x,Send,y),outersp!!2))
+
+
+
+runPetrify :: FilePath -> FilePath -> IO ()
+runPetrify file output =
+  let cmd = "petrify -dead -ip -mints -efc -er "++file++" -o "++output
   in do out <- readProcess "bash" ["-c", cmd] []
         return ()
 
