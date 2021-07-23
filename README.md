@@ -4,6 +4,13 @@ This is a tool that implements the theory introduced in "[_Verifying Asynchronou
 Communicating Session Automata_](https://link.springer.com/chapter/10.1007/978-3-030-25540-4_6)".
 
 
+## Understanding the KMC tool
+
+The KMC tool has one purpose: check that a given system of
+communicating automata is *correct*, i.e., all messages that are sent
+are received, and no automaton gets permanently stuck in a receiving
+state; this is called **safety** in the paper.
+
 ## Requirements:
 
 You will need [ghc](https://www.haskell.org/platform/) installed on
@@ -38,9 +45,59 @@ cabal install cmdargs ansi-terminal parallel split MissingH --lib
 * **Benchmarking:** to find the least k s.t. k-MC holds for input file:
   `./KMC <path-to-automata> <min-bound> <max-bound> +RTS -N<number-of-cpus>`
 
+### Examples
+
+The KMC tool takes two parameters: a (path to
+a file containing a) system of communicating automata and a bound `k`.
+
+Example with k=2
+
+```
+$ ./KMC tests/benchmarks/gmc-runningexample 2 --fsm
+CSA: True            			    # The automata are deterministic and have no mixed states (Remark 1)
+reduced 2-OBI: True			    # The automata validate 2-OBI (Def 6)
+reduced 2-SIBI: False			    # The automata validate 2-SIBI (Def 11)
+reduced 2-exhaustive: True 		    # The automata validate 2-exhaustivity (Def 9)
+reduced 2-safe: True  			    # The automata validate 2-safety (Def 4)
+```
+
+In the above case, we have that this example validates all necessary
+conditions, except for 2-SIBI. The k-CIBI check is disabled by default
+as it is generally a lot more expensive. It can be activated using the
+`--cibi` flag, e.g.,
+
+```
+$ ./KMC tests/benchmarks/gmc-runningexample 2 --fsm --cibi
+CSA: True
+reduced 2-OBI: True
+reduced 2-SIBI: False		# The automata _do not_ validate 2-SIBI (Def 11)
+reduced 2-CIBI: True		# The automata validate 2-CIBI (Def 10)
+reduced 2-exhaustive: True
+reduced 2-safe: True
+```
+
+Now, we know that the automata are 2-OBI, IBI, and k-MC, hence they
+are *safe* (see Theorem 1 and Lemma 1).
 
 
-See [*the artifact guidelines*](https://bitbucket.org/julien-lange/kmc-cav19/src/master/artifact.md) for more details.
+The k-OBI and k-*IBI are only executed when necessary (i.e., if the
+automata are not directed). For instance the automata in our running
+example are basic (directed), hence we have:
+
+```
+$ ./KMC tests/running-example.txt 3 
+CSA: True
+Basic: True
+reduced 3-exhaustive: True
+reduced 3-safe: True
+```
+
+In general, *Basic* implies *k-OBI* and *k-SIBI* (for all k), we also
+have that *k-SIBI* implies *k-CIBI*. For *k-MC* to (soundly) imply
+general safety, k-OBI and k-CIBI must hold.
+
+The `--debug` flag displays information regarding the size of the
+generated reduced transition system (RTS).
 
 
 ### Other usages:
@@ -88,7 +145,13 @@ KMC takes the same input language as the [GMC tool](https://bitbucket.org/julien
     q0 0 ? bye q1
     .marking q0
     .end
-	
+
+
+
+
+
+
+
 	
 # Experimental synthesis of global graph
 
