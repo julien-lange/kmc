@@ -7,6 +7,10 @@ import FSMParser (parseFSMs, mkSystem)
 import DOTParser (parseDOT, mkDSystem)
 import LocalType
 
+import PetrifyBridge -- Synthesis
+import BuildGlobal -- Synthesis
+
+
 import System.Process
 import System.Directory
 import System.Console.CmdArgs
@@ -176,6 +180,50 @@ printAll cibi debug red basename cfsms bound = do
     (boundedtsFileName basename bound)
     (printAutomaton printLabel ts)
 
+  printProjectionsDot
+    cfsms
+    ((syncglobalBase basename 0)++"norm-system.dot")
+    ((syncglobalBase basename 0)++"norm-system.png")
+    -- putStrLn $ printSystemToGMC cfsms
+
+  
+  when flag $ do
+    putStrLn "------------- SEND PROJECTIONS -------------------"
+    mincfsms <- mapM (\p -> minimisemCRL2 p $ projectTS ts (sendProjection p)) peers
+  
+    
+    let scfsms = M.fromList $ zip peers mincfsms
+        fts = if red
+              then buildTS 1 scfsms
+              else buildReduceTS (isBasic scfsms) 1 scfsms
+
+    printInformation debug cibi red 1 scfsms fts
+
+    -- print all projections of k-TS
+    mapM_ (\(x,m) -> writeFile
+                     (outputFolder++basename++"-proj-"++(show $ bound)++"-"++(x)++".fsm")
+                     (printAutomaton printMLabel $ stringAutomaton m)
+          ) $ M.toList scfsms
+  
+ 
+    let ssts = synchronise $ buildTS 1 scfsms -- this one cannot be up-to POR
+        eventTable = mkEventTable ssts
+        newts = integerAutomaton $ projectTS ssts (printMSyncLabel eventTable) 
+    writeFile
+      (synctsFileName basename bound)
+      (printAutomaton id newts)
+
+
+
+    writeFile (syncpetriPetrify basename) (ts2petrify eventTable (newts))
+    runPetrify (syncpetriPetrify basename) (syncpetriOutput basename)
+    buildGlobal (syncpetriOutput basename) (makeReverseTable eventTable) (syncglobalBase basename bound)
+    mkPicture ((syncglobalBase basename bound)++"_global.dot") (syncglobalGraph basename bound)
+
+    printProjectionsDot
+      scfsms
+      ((syncglobalBase basename bound)++"snd-system.dot")
+      ((syncglobalBase basename bound)++"snd-system.png")
 
       
 outputFolder = "outputs/"
@@ -187,6 +235,20 @@ projFileName basename x b = outputFolder++basename++"-proj-"++(show $ b)++"-"++(
 projrcvFileName  basename x b = outputFolder++basename++"-proj-rcv-"++(show $ b)++"-"++(x)++".fsm" 
 projsndFileName  basename x b = outputFolder++basename++"-proj-snd-"++(show $ b)++"-"++(x)++".fsm" 
 syncglobalBase basename b =  outputFolder++basename++"-sync-"++(show b)
+
+petriEvtName basename = outputFolder++basename++"-evtTable"++".txt"
+petriPetrify basename = outputFolder++basename++"-petrify"++".txt"
+petriOutput basename =  outputFolder++basename++"-pn"++".txt"
+globalBase basename =  outputFolder++basename
+globalGraph basename b = outputFolder++basename++"-"++(show b)++"-globalgraph"++".png"
+
+minimisedSendTS basename = outputFolder++basename++"-min-snd"++".fsm" 
+
+syncglobalGraph basename b = outputFolder++basename++(show b)++"-globalgraph-sync"++".png"
+syncpetriOutput basename =  outputFolder++basename++"-pn-sync"++".txt"
+syncpetriPetrify basename = outputFolder++basename++"-sync-petrify"++".txt"
+synctsFileName basename b = outputFolder++basename++"-ts-sync-"++(show $ b)++".fsm"
+syncminimisedSendTS basename = outputFolder++basename++"-min-snd-sync"++".fsm"  
 
 
 printInformation :: Bool -> Bool -> Bool -> Int -> System -> TS -> IO ()
@@ -207,6 +269,12 @@ printInformation debug cibi flag bound cfsms ts =
      printResult (prex++(show bound)++"-safe: ") (ksafe cfsms ts)
 
 
+compareLTS :: String -> String -> IO Bool
+compareLTS s1 s2 =
+  let mcmd = "ltscompare -eweak-bisim "++s1++" "++s2
+  in do (ec, sd, out) <- readProcessWithExitCode "bash" ["-c",mcmd] []
+        -- putStrLn $ show out
+        return $ (unpack. strip . pack $ out)=="LTSs are equal (weak bisimilarity)"
 
 
 
