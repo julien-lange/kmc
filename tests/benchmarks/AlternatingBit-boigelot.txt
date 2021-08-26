@@ -14,7 +14,6 @@ q6 1 ? a1 q1
 .outputs 
 .state graph
 q1 0 ? d1 q8
-q9 0 ! a1 q1
 q1 0 ? d0 q2
 q2 0 ! a0 q4
 q4 0 ? d0 q7
