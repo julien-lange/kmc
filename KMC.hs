@@ -4,7 +4,6 @@ import Automata
 import CFSM 
 import Parser (parseCFSMs)
 import FSMParser (parseFSMs, mkSystem)
-import DOTParser (parseDOT, mkDSystem)
 import LocalType
 
 import PetrifyBridge -- Synthesis
@@ -100,11 +99,7 @@ parse False False ssystem =
   case parseCFSMs ssystem of
    Left err -> Left err
    Right sys -> Right $ M.fromList $ L.map (\(x,y) -> (x, type2Machine x y)) sys
-parse True _ ssystem =
-  case parseDOT ssystem of
-   Left err -> Left err
-   Right sys -> Right $ (mkDSystem sys)
-parse _ True ssystem =
+parse _ _ ssystem =
   case parseFSMs ssystem of
    Left err -> Left err
    Right sys -> Right $ mkSystem sys
