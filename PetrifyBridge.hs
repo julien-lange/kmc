@@ -36,7 +36,7 @@ mkEventTable aut = M.fromList $ snd $
 
 
 printGlobalLabel :: Label -> String
-printGlobalLabel (p,q,d,m) = p++"->"++q++":"++m
+printGlobalLabel (p,q,d,(m,pl)) = p++"->"++q++":"++m++pl
   -- case d of
   --  Send -> p++q++"!"++m
   --  Receive -> p++q++"?"++m

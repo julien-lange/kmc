@@ -192,42 +192,43 @@ printAll cibi debug red flag basename cfsms bound = do
 
   
   when flag $ do
-    putStrLn "------------- SEND PROJECTIONS -------------------"
-    mincfsms <- mapM (\p -> minimisemCRL2 p $ projectTS ts (sendProjection p)) peers
+    putStrLn "Projections disabled for now..."
+    -- putStrLn "------------- SEND PROJECTIONS -------------------"
+    -- mincfsms <- mapM (\p -> minimisemCRL2 p $ projectTS ts (sendProjection p)) peers
   
     
-    let scfsms = M.fromList $ zip peers mincfsms
-        fts = if red
-              then buildTS 1 scfsms
-              else buildReduceTS (isBasic scfsms) 1 scfsms
+    -- let scfsms = M.fromList $ zip peers mincfsms
+    --     fts = if red
+    --           then buildTS 1 scfsms
+    --           else buildReduceTS (isBasic scfsms) 1 scfsms
 
-    printInformation debug cibi red 1 scfsms fts
+    -- printInformation debug cibi red 1 scfsms fts
 
-    -- print all projections of k-TS
-    mapM_ (\(x,m) -> writeFile
-                     (outputFolder++basename++"-proj-"++(show $ bound)++"-"++(x)++".fsm")
-                     (printAutomaton printMLabel $ stringAutomaton m)
-          ) $ M.toList scfsms
+    -- -- print all projections of k-TS
+    -- mapM_ (\(x,m) -> writeFile
+    --                  (outputFolder++basename++"-proj-"++(show $ bound)++"-"++(x)++".fsm")
+    --                  (printAutomaton printMLabel $ stringAutomaton m)
+    --       ) $ M.toList scfsms
   
  
-    let ssts = synchronise $ buildTS 1 scfsms -- this one cannot be up-to POR
-        eventTable = mkEventTable ssts
-        newts = integerAutomaton $ projectTS ssts (printMSyncLabel eventTable) 
-    writeFile
-      (synctsFileName basename bound)
-      (printAutomaton id newts)
+    -- let ssts = synchronise $ buildTS 1 scfsms -- this one cannot be up-to POR
+    --     eventTable = mkEventTable ssts
+    --     newts = integerAutomaton $ projectTS ssts (printMSyncLabel eventTable) 
+    -- writeFile
+    --   (synctsFileName basename bound)
+    --   (printAutomaton id newts)
 
 
 
-    writeFile (syncpetriPetrify basename) (ts2petrify eventTable (newts))
-    runPetrify (syncpetriPetrify basename) (syncpetriOutput basename)
-    buildGlobal (syncpetriOutput basename) (makeReverseTable eventTable) (syncglobalBase basename bound)
-    mkPicture ((syncglobalBase basename bound)++"_global.dot") (syncglobalGraph basename bound)
+    -- writeFile (syncpetriPetrify basename) (ts2petrify eventTable (newts))
+    -- runPetrify (syncpetriPetrify basename) (syncpetriOutput basename)
+    -- buildGlobal (syncpetriOutput basename) (makeReverseTable eventTable) (syncglobalBase basename bound)
+    -- mkPicture ((syncglobalBase basename bound)++"_global.dot") (syncglobalGraph basename bound)
 
-    printProjectionsDot
-      scfsms
-      ((syncglobalBase basename bound)++"snd-system.dot")
-      ((syncglobalBase basename bound)++"snd-system.png")
+    -- printProjectionsDot
+    --   scfsms
+    --   ((syncglobalBase basename bound)++"snd-system.dot")
+    --   ((syncglobalBase basename bound)++"snd-system.png")
 
       
 outputFolder = "outputs/"
@@ -314,43 +315,43 @@ printProjectionsDot sys file output =
         
 
         
-minimisemCRL2 :: Participant -> (Automaton Configuration (Maybe Label)) -> IO Machine
-minimisemCRL2 p aut = do
-  writeFile (p++"auto-tmp.fsm") (printAutomaton printMaybeLabel aut)
-  runMimimisation (p++"auto-tmp.fsm") (p++"auto-tmp.aut")
-  parsemCRL2 (p++"auto-tmp.aut")
+-- minimisemCRL2 :: Participant -> (Automaton Configuration (Maybe Label)) -> IO Machine
+-- minimisemCRL2 p aut = do
+--   writeFile (p++"auto-tmp.fsm") (printAutomaton printMaybeLabel aut)
+--   runMimimisation (p++"auto-tmp.fsm") (p++"auto-tmp.aut")
+--   parsemCRL2 (p++"auto-tmp.aut")
 
-runMimimisation :: FilePath -> FilePath -> IO ()
-runMimimisation file output =
-  let cmd = "ltsconvert -eweak-trace "++file++" "++output
-      -- cmd  = "ltsconvert -eweak-bisim "++file++" "++output
-  in do out <- readProcess "bash" ["-c", cmd] []
-        return ()
+-- runMimimisation :: FilePath -> FilePath -> IO ()
+-- runMimimisation file output =
+--   let cmd = "ltsconvert -eweak-trace "++file++" "++output
+--       -- cmd  = "ltsconvert -eweak-bisim "++file++" "++output
+--   in do out <- readProcess "bash" ["-c", cmd] []
+--         return ()
 
 
  
-parsemCRL2 :: FilePath -> IO (Automaton State Label)
-parsemCRL2 f = do fcontent <- readFile f
-                  let flines = lines fcontent
-                      ist =  head $ splitOn "," $ head $ tail $ splitOn "(" (head flines)
-                      ntrans = L.map mkTrans $ tail flines         
-                  return $ Automaton { states = nub $ concat $ L.map (\(s,(l,t)) -> [s,t]) ntrans
-                                     , sinit = ist
-                                               --  show $ minimum $ L.map (\x -> read (fst x) :: Int) ntrans
-                                     , transitions = ntrans
-                                     }
-  where mkTrans s = let outersp = splitOn "," (init $ tail $ L.filter (/='"') s)
-                        sender = splitOn "TO" (outersp!!1)
-                    in case splitOn "SND" (sender!!1) of
-                        [x] -> let msg = splitOn "RCV" (sender!!1)
-                               in (outersp!!0, ((sender!!0,msg!!0,Receive,msg!!1),outersp!!2))
-                        (x:y:xs) -> (outersp!!0, ((sender!!0,x,Send,y),outersp!!2))
+-- parsemCRL2 :: FilePath -> IO (Automaton State Label)
+-- parsemCRL2 f = do fcontent <- readFile f
+--                   let flines = lines fcontent
+--                       ist =  head $ splitOn "," $ head $ tail $ splitOn "(" (head flines)
+--                       ntrans = L.map mkTrans $ tail flines         
+--                   return $ Automaton { states = nub $ concat $ L.map (\(s,(l,t)) -> [s,t]) ntrans
+--                                      , sinit = ist
+--                                                --  show $ minimum $ L.map (\x -> read (fst x) :: Int) ntrans
+--                                      , transitions = ntrans
+--                                      }
+--   where mkTrans s = let outersp = splitOn "," (init $ tail $ L.filter (/='"') s)
+--                         sender = splitOn "TO" (outersp!!1)
+--                     in case splitOn "SND" (sender!!1) of
+--                         [x] -> let msg = splitOn "RCV" (sender!!1)
+--                                in (outersp!!0, ((sender!!0,msg!!0,Receive,msg!!1),outersp!!2))
+--                         (x:y:xs) -> (outersp!!0, ((sender!!0,x,Send,y),outersp!!2))
 
 
 
-runPetrify :: FilePath -> FilePath -> IO ()
-runPetrify file output =
-  let cmd = "petrify -dead -ip -mints -efc -er "++file++" -o "++output
-  in do out <- readProcess "bash" ["-c", cmd] []
-        return ()
+-- runPetrify :: FilePath -> FilePath -> IO ()
+-- runPetrify file output =
+--   let cmd = "petrify -dead -ip -mints -efc -er "++file++" -o "++output
+--   in do out <- readProcess "bash" ["-c", cmd] []
+--         return ()
 

@@ -17,7 +17,7 @@ import Text.ParserCombinators.Parsec.Error
 import System.IO.Unsafe
 import Debug.Trace
 
-type PTransition = (String, ((String, Direction, String), String))
+type PTransition = (String, ((String, Direction, (String, String)), String))
 type PMachine = (String, [PTransition])
 type PSystem = [PMachine]
 
@@ -70,15 +70,27 @@ parens    = T.parens lexer
 poperator = T.operator lexer
 
 participantid = T.identifier lexer  -- T.identifier lexer -- participant ID
-pmessage = T.identifier lexer -- message string
 pstate = T.identifier lexer
+
+
+
+labmessage = do { lab <- T.identifier lexer
+                ; return (lab, "")
+                }
+pmessage = do { lab <- T.identifier lexer
+              ; symbol "<"
+              ; pl <- T.identifier lexer
+              ; symbol ">"
+              ; return (lab, pl)
+              }
+
 
  
 transitionParser :: Parser PTransition
 transitionParser = do { src <- pstate
                       ; partner <- participantid
                       ; dir <- (symbol "?" <|> symbol "!")
-                      ; msg <- pmessage
+                      ; msg <- choice [try pmessage, try labmessage]
                       ; trg <- pstate
                       ; return $ (src, ((partner, if dir=="!" then Send else Receive, msg), trg))
                       }

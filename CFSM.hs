@@ -16,7 +16,7 @@ import Debug.Trace
 
 type Participant = String
 type State = String
-type Message = String
+type Message = (String, String) -- (Label, Payload)
 data Direction = Send
                | Receive
                deriving (Show, Eq, Ord, Read)
@@ -70,8 +70,8 @@ object (s, r, Send, msg) = r
 object (s, r, Receive, msg) = s
 
 printLabel :: Label -> String
-printLabel (s, r, Send, msg) = s++r++"snd"++msg
-printLabel (s, r, Receive, msg) = s++r++"rcv"++msg
+printLabel (s, r, Send, (msg,pl)) = s++r++"snd"++msg++"<"++pl++">"
+printLabel (s, r, Receive, (msg,pl)) = s++r++"rcv"++msg++"<"++pl++">"
 
 printMLabel :: Label -> String
 printMLabel l = printLabel l
@@ -79,9 +79,9 @@ printMLabel l = printLabel l
 
 
 printMaybeLabel :: Maybe Label -> String
-printMaybeLabel (Just (s, r, d, msg)) = case d of
-                                         Send ->  s++"TO"++r++"SND"++msg
-                                         Receive ->  s++"TO"++r++"RCV"++msg
+printMaybeLabel (Just (s, r, d, (msg,pl))) = case d of
+                                         Send ->  s++"TO"++r++"SND"++msg++"_"++pl
+                                         Receive ->  s++"TO"++r++"RCV"++msg++"_"++pl
 printMaybeLabel Nothing = "tau"
 
 printMSyncLabel :: Map Label String -> Label -> String
@@ -392,8 +392,8 @@ printMachineToGMC envi aut = ".outputs\n"
                              ++".end"
   where strans = L.map (\(src, (lab, trg)) -> (pstate src) ++" "++(plab lab)++" "++(pstate trg) ) $ transitions aut
         pstate i = "q"++(show i)
-        plab (s,r,Send,l) = (show (envi M.! r))++" ! "++l
-        plab (s,r,Receive,l) = (show (envi M.! s))++" ? "++l
+        plab (s,r,Send,(l,pl)) = (show (envi M.! r))++" ! "++l++pl
+        plab (s,r,Receive,(l,pl)) = (show (envi M.! s))++" ? "++l++pl
 
 
 
@@ -431,8 +431,8 @@ printStateM s id = "q"++(rmveQuotes $ (show id)++(show s))
 
 
 printLabelDot :: Label -> String
-printLabelDot (s, r, Send, msg) = s++r++"!"++msg
-printLabelDot (s, r, Receive, msg) = s++r++"?"++msg
+printLabelDot (s, r, Send, (msg,pl)) = s++r++"!"++msg++pl
+printLabelDot (s, r, Receive, (msg,pl)) = s++r++"?"++msg++pl
 
 printMachine :: Machine -> Participant -> String
 printMachine m id =

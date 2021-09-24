@@ -74,11 +74,11 @@ type2Machine pid t = let nedges = L.nub $ genEdges ninit M.empty [] t
                      
                   
   where genEdges prev map acc (Rec s t) = genEdges prev (M.insert s prev map) acc t
-        genEdges prev map acc (Act partner dir s t) = 
-          let next = genState ((stToUpper prev)++(stToUpper s)) map t
+        genEdges prev map acc (Act partner dir (s,pl) t) = 
+          let next = genState ((stToUpper prev)++(stToUpper s)++(stToUpper pl)) map t
               lab = if dir == Send
-                    then (pid, partner, dir, s)
-                    else (partner, pid, dir, s)
+                    then (pid, partner, dir, (s,pl))
+                    else (partner, pid, dir, (s,pl))
           in (prev, (lab, next)):(genEdges next map acc t)
         genEdges prev map acc (Choice dir xs) = L.foldr (++) [] (L.map (genEdges prev map acc) xs)
         genEdges prev map acc (End) = []

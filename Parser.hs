@@ -45,9 +45,18 @@ parens    = T.parens lexer
 poperator = T.operator lexer
 
 participantid = (many1 upper)  -- T.identifier lexer -- participant ID
-pmessage = T.identifier lexer -- message string
+
 pvariable = T.identifier lexer -- Recursive variable
 
+labmessage = do { lab <- T.identifier lexer
+                ; return (lab, "")
+                }
+pmessage = do { lab <- T.identifier lexer
+              ; symbol "<"
+              ; pl <- T.identifier lexer
+              ; symbol ">"
+              ; return (lab, pl)
+              }
 
 
 sysparser :: Parser [(Participant, LocalType)]
@@ -67,7 +76,7 @@ elemparser = do { id <- participantid
 ltparser :: Parser LocalType
 ltparser = do { partner <- participantid
               ; dir <- (symbol "?" <|> symbol "!")
-              ; act <-  pmessage
+              ; act <-  choice [try pmessage, try labmessage]
               ; symbol ";"
               ; cont <- ltparser
               ; return $ Act partner (if dir=="!" then Send else Receive) act cont
