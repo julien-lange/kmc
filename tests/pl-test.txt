@@ -1,0 +1,7 @@
+A: rec x . B!a<int>; B?b<bool>; x
+
+B: rec y . A!b<bool>; A?a<int>; y
+
+C: D!foo; end
+
+D: C?foo; end
