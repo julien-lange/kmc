@@ -256,6 +256,8 @@ printInformation debug cibi flag bound cfsms ts =
   do printResult "CSA: " (isCSA cfsms)
      let prex = if flag then "" else "reduced "
          sibi = kinputindep True cfsms ts
+         ks = ksafe cfsms ts
+         (trp, tre) = ksafeTrace cfsms ts
      if isBasic cfsms
        then printResult "Basic: " True
        else do printResult (prex++(show bound)++"-OBI: ") $ koutputindep bound cfsms ts
@@ -266,7 +268,10 @@ printInformation debug cibi flag bound cfsms ts =
                when (cibi && not sibi) $ do
                  printResult (prex++(show bound)++"-CIBI: ") $ kinputindepChanSize bound cfsms ts
      printResult (prex++(show bound)++"-exhaustive: ") (kexhaustive cfsms ts)
-     printResult (prex++(show bound)++"-safe: ") (ksafe cfsms ts)
+     printResult (prex++(show bound)++"-safe: ") ks
+     when (not ks) $
+       do putStrLn $ "Traces violating progress: "++(show trp)
+          putStrLn $ "Traces violating eventual reception: "++(show tre)
 
 
 compareLTS :: String -> String -> IO Bool

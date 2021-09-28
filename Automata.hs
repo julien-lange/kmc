@@ -223,6 +223,17 @@ findLabel aut s fun gun = helper [] [s]
                            (helper (s:seen) (xs++(L.map snd $ L.filter (\x -> gun (fst x)) sc)))
 
 
+findPathToState  :: (Eq a, Eq b) => Automaton a b -> a -> Maybe [b]
+findPathToState aut s = helper [] [] (sinit aut)
+  where helper path seen x 
+          | x == s = Just path
+          | x `L.elem` seen = Nothing
+          | otherwise = let sc = successors aut x
+                          in case catMaybes (L.map (\(l,s) -> helper (path++[l]) (x:seen) s) sc) of
+                               [] -> Nothing
+                               (p:ps) -> Just p
+
+
         
 mfindLabel :: (Eq a, Eq b) => Automaton a b -> a -> (b -> Bool) -> (b -> Bool) -> Maybe [a]
 mfindLabel aut s fun gun = helper [] [s]

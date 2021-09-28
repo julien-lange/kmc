@@ -4,14 +4,15 @@ import Data.List as L
 import Data.Map as M
 import Data.Set as S
 import Data.Function (on)
+import Data.Maybe (catMaybes)
 import Automata
 
 import Control.Parallel.Strategies
 import Control.Parallel
 
--- DEBUG
-import System.IO.Unsafe
-import Debug.Trace
+-- -- DEBUG
+-- import System.IO.Unsafe
+-- import Debug.Trace
 
 
 type Participant = String
@@ -28,7 +29,7 @@ type System = Map Participant Machine
 type StateMap = Map Participant State
 type QueueMap = Map (Participant, Participant) [Message]
 
-type Configuration = ((StateMap, QueueMap), [Label])
+type Configuration = (StateMap, QueueMap)
 
 type Machine = Automaton State Label
 
@@ -121,14 +122,14 @@ nextConfiguration k sys (states, queues) =
 
 
 nextConfigurationFixed :: Int -> System -> Configuration -> Label -> Configuration
-nextConfigurationFixed k sys (states, queues) l@(s, r, Send, msg) =
+nextConfigurationFixed k sys ((states, queues)) l@(s, r, Send, msg) =
   let oldqueue = queues M.! (s,r)
       target = successor (sys M.! s) (states M.! s) l
-  in (M.insert s target states, M.insert (s,r) (oldqueue++[msg]) queues)
-nextConfigurationFixed k sys (states, queues) l@(s, r, Receive, msg) =
+  in ((M.insert s target states, M.insert (s,r) (oldqueue++[msg]) queues))
+nextConfigurationFixed k sys ((states, queues)) l@(s, r, Receive, msg) =
   let (x:xs) = queues M.! (s,r)
       target = successor (sys M.! r) (states M.! r) l
-   in (M.insert r target states, M.insert (s,r) xs queues)
+   in ((M.insert r target states, M.insert (s,r) xs queues))
 
 buildTS :: Int -> System -> TS
 buildTS k sys = Automaton { states = nub $ concat $ L.map (\x-> [fst x, snd . snd $ x]) alltrans
@@ -138,11 +139,11 @@ buildTS k sys = Automaton { states = nub $ concat $ L.map (\x-> [fst x, snd . sn
   where alltrans = nub $ helper [] [] [initConf sys]
         helper acc seen [] = acc
         helper acc seen (x:xs)
-          | x `elem` seen = helper acc seen xs
+          | (fst x) `elem` seen = helper acc seen xs
           | otherwise =
               let next = nextConfiguration k sys x
                   ntrans = L.map (\(l,t) -> (x,(l,t))) next
-              in helper (acc++ntrans) (x:seen) (xs++(L.map snd next))
+              in helper (acc++ntrans) ((fst x):seen) (xs++(L.map snd next))
 
 
 
@@ -167,7 +168,7 @@ buildReduceTS basic k sys = Automaton { states = nub $ concat $ L.map (\x-> [fst
         ntrans = helper [(initConf sys, [])] [] []
         helper [] seen acc =  acc
         helper ((s,todo):ss) seen acc
-          | s `L.elem` seen = helper ss seen acc
+          | (fst s) `L.elem` seen = helper ss seen acc
           | otherwise =
               case todo of
               [] -> case sortBy compareTransitions $
@@ -176,11 +177,11 @@ buildReduceTS basic k sys = Automaton { states = nub $ concat $ L.map (\x-> [fst
                      [] -> helper ss seen acc
                      (h:xs) -> let current = (L.map (\(x,y) -> (s,(x,y))) h)
                                    next = L.map (\(x,y) -> (y,xs)) h
-                               in helper (ss++next) (s:seen) (acc++current)
+                               in helper (ss++next) ((fst s):seen) (acc++current)
         
               (list:rest) -> let current = (L.map (\(x,y) -> (s,(x, (nextConfigurationFixed k sys s x)))) list)
-                                 next =  L.map (\(x,y) -> (nextConfigurationFixed k sys s x,rest)) list
-                             in helper (ss++next) (s:seen) (acc++current)
+                                 next =  L.map (\(x,y) -> (nextConfigurationFixed k sys s x, rest)) list
+                             in helper (ss++next) ((fst s):seen) (acc++current)
         
 projectLabel :: Participant -> Label -> Maybe Label
 projectLabel p (s,r,dir,msg)
@@ -236,39 +237,70 @@ reduceTS ts =
 
 kexhaustive :: System -> TS -> Bool
 kexhaustive sys ts = L.and $ (parMap rpar) helper (states ts)
-  where helper (ss,qq) = let msend m = L.map fst $ L.filter (\x -> (direction $ fst x) == Send) $ successors (sys!m) (ss!m)
-                             asends = concat $ L.map msend $ M.keys sys
-                             --
-                             fun a b = a==b 
-                             --
-                             gun a b = (subject a) /= (subject b)
-                         in L.and $ L.map (\x -> findLabel ts (ss,qq) (fun x) (gun x) ) asends
+  where helper :: Configuration -> Bool
+        helper ((ss,qq)) = 
+          let msend m = L.map fst $ L.filter (\x -> (direction $ fst x) == Send) $ successors (sys!m) (ss!m)
+              asends = concat $ L.map msend $ M.keys sys
+              --
+              fun a b = a==b 
+              --
+              gun a b = (subject a) /= (subject b)
+          in L.and $ L.map (\x -> findLabel ts ((ss,qq)) (fun x) (gun x) ) asends
 
 
 
 ksafe :: System -> TS -> Bool
 ksafe sys ts =  L.and $ (parMap rpar) helper (states ts)
-  where helper (ss,qq) = let mrcvs m = L.map fst $ L.filter (\x -> (direction $ fst x) == Receive) $ successors (sys!m) (ss!m)
-                             arcvs = concat $ L.map mrcvs $ M.keys sys
+  where helper cf@((ss,qq)) =
+          let mrcvs m = L.map fst $ L.filter (\x -> (direction $ fst x) == Receive) $ successors (sys!m) (ss!m)
+              arcvs = concat $ L.map mrcvs $ M.keys sys
+                
+              fun (s, r, Receive, msg) (p,q,d,m) = (r==q) && (d==Receive)
+              fun _ _ = False
+          
+              qs = L.map (\((s,r),msgs) -> (s, r, Receive, head msgs)) $
+                   L.filter (\x -> not $ L.null $ snd x) $ M.toList qq
                              
-                             fun (s, r, Receive, msg) (p,q,d,m) = (r==q) && (d==Receive)
-                             fun _ _ = False
+          in (L.and $ L.map (\x -> findLabel ts cf (fun x) (\x->True)) arcvs) -- progress
+             &&
+             (L.and $ L.map (\x -> findLabel ts cf (x==) (\x->True)) qs) -- evt reception
 
-                             qs = L.map (\((s,r),msgs) -> (s, r, Receive, head msgs)) $
-                                  L.filter (\x -> not $ L.null $ snd x) $ M.toList qq
+ksafeTrace :: System -> TS -> ([[Label]],[[Label]])
+ksafeTrace sys ts = (getPaths outProg, getPaths outEvr)
+  where (outProg, outEvr) = unzip $ (parMap rpar) helper (states ts)
+        getPaths xs = catMaybes $ L.map (findPathToState ts) (concat xs)
+        helper cf@((ss,qq)) =
+          let mrcvs m = L.map fst $ L.filter (\x -> (direction $ fst x) == Receive) $ successors (sys!m) (ss!m)
+              arcvs = concat $ L.map mrcvs $ M.keys sys
+                
+              fun (s, r, Receive, msg) (p,q,d,m) = (r==q) && (d==Receive)
+              fun _ _ = False
+          
+              qs = L.map (\((s,r),msgs) -> (s, r, Receive, head msgs)) $
+                   L.filter (\x -> not $ L.null $ snd x) $ M.toList qq
+              --
+              trProg = L.map fst $
+                       L.filter (\(x,y) ->  not y) $
+                       L.map (\x -> (cf, findLabel ts cf (fun x) (\x->True))) arcvs
+              --
+              trEvr = L.map fst $
+                      L.filter (\(x,y) ->  not y) $
+                      L.map (\x -> (cf, findLabel ts cf (x==) (\x->True))) qs
+              --
+          in (trProg, trEvr)
                              
-                         in (L.and $ L.map (\x -> findLabel ts (ss,qq) (fun x) (\x->True)) arcvs) -- progress
-                            &&
-                            (L.and $ L.map (\x -> findLabel ts (ss,qq) (x==) (\x->True)) qs) -- evt reception
+          -- in (L.and $ L.map (\x -> findLabel ts cf (fun x) (\x->True)) arcvs) -- progress
+          --    &&
+          --    (L.and $ L.map (\x -> findLabel ts cf (x==) (\x->True)) qs) -- evt reception             
               
 
 koutputindep :: Int -> System -> TS -> Bool
 koutputindep bound sys ts =  L.and $ (parMap rpar) helper (states ts)
-  where helper (ss,qq) = koutputindepConfiguration bound sys (ss,qq)
+  where helper cf = koutputindepConfiguration bound sys cf
 
 koutputindepConfiguration :: Int -> System -> Configuration -> Bool
-koutputindepConfiguration bound sys (ss,qq) =
-  let nextconfs = nextConfiguration bound sys (ss,qq)  
+koutputindepConfiguration bound sys ((ss,qq)) =
+  let nextconfs = nextConfiguration bound sys ((ss,qq))
       msend m = L.map fst
                 $ L.filter (\x -> (direction $ fst x) == Send)
                 $ successors (sys!m) (ss!m)
@@ -289,71 +321,73 @@ koutputindepConfiguration bound sys (ss,qq) =
      
 kinputindep :: Bool -> System -> TS -> Bool
 kinputindep sibi sys ts = L.and $ (parMap rpar) helper (states ts)
-  where helper (ss,qq) = let mreceive m = L.map fst
-                                          $ L.filter (\x -> (direction $ fst x) == Receive)
-                                          $ successors (sys!m) (ss!m)
+  where helper cf@((ss,qq)) =
+          let mreceive m = L.map fst
+                           $ L.filter (\x -> (direction $ fst x) == Receive)
+                           $ successors (sys!m) (ss!m)
+              --
+              actrcv m = nub $ L.map fst
+                         $ L.filter (\x -> (direction $ fst x) == Receive
+                                           && ((subject $ fst x) == m))
+                         $ successors ts cf
+              --
+              asends =  concat
+                        $ L.map (\x -> if (not $ L.null $ actrcv x)
+                                       then avlabel (head $ actrcv x) (mreceive x)
+                                       else []
+                                ) $ M.keys sys
                              --
-                             actrcv m = nub $ L.map fst
-                                        $ L.filter (\x -> (direction $ fst x) == Receive
-                                                          && ((subject $ fst x) == m))
-                                        $ successors ts (ss,qq)
-                             --
-                             asends =  concat
-                                       $ L.map (\x -> if (not $ L.null $ actrcv x)
-                                                      then avlabel (head $ actrcv x) (mreceive x)
-                                                      else []
-                                               ) $ M.keys sys
-                             --
-                             avlabel a [] = []
-                             avlabel a (b:bs) =
-                               if (object a /= object b)
-                               then (mkDual b):(avlabel a bs)
-                               else avlabel a bs
-                             --
-                         in  (L.and $ L.map (\x -> (length $ actrcv x) < 2)$ M.keys sys)
-                             &&
-                             (
-                               (not sibi)
-                               ||
-                               (L.and $ L.map (\x -> not $ findLabel ts (ss,qq) (x==) (\x->True) ) asends)
-                             )
+              avlabel a [] = []
+              avlabel a (b:bs) =
+                if (object a /= object b)
+                then (mkDual b):(avlabel a bs)
+                else avlabel a bs
+              --
+          in  (L.and $ L.map (\x -> (length $ actrcv x) < 2)$ M.keys sys)
+              &&
+              (
+                (not sibi)
+                ||
+                (L.and $ L.map (\x -> not $ findLabel ts cf (x==) (\x->True) ) asends)
+              )
 
 kinputindepChanSize :: Int -> System -> TS -> Bool
 kinputindepChanSize bound sys ts = L.and $ (parMap rpar) helper (states ts)
-  where helper (ss,qq) = let mreceive m = L.map fst
-                                          $ L.filter (\x -> (direction $ fst x) == Receive)
-                                          $ successors (sys!m) (ss!m)
+  where helper cf@((ss,qq)) =
+          let mreceive m = L.map fst
+                           $ L.filter (\x -> (direction $ fst x) == Receive)
+                           $ successors (sys!m) (ss!m)
+                --
+              actrcv m = nub $ L.map fst
+                         $ L.filter (\x -> (direction $ fst x) == Receive
+                                           && ((subject $ fst x) == m))
+                         $ successors ts cf
+                --
+              asends = concat $
+                       L.map (\x -> if (not $ L.null $ actrcv x)
+                                    then case avlabel (head $ actrcv x) (mreceive x) of
+                                           [] -> []
+                                           (z:zs) -> [(head $ actrcv x, (z:zs))]
+                                    else []
+                             ) $ M.keys sys
                              --
-                             actrcv m = nub $ L.map fst
-                                        $ L.filter (\x -> (direction $ fst x) == Receive
-                                                          && ((subject $ fst x) == m))
-                                        $ successors ts (ss,qq)
-                             --
-                             asends = concat $
-                                      L.map (\x -> if (not $ L.null $ actrcv x)
-                                                   then case avlabel (head $ actrcv x) (mreceive x) of
-                                                         [] -> []
-                                                         (z:zs) -> [(head $ actrcv x, (z:zs))]
-                                                   else []
-                                            ) $ M.keys sys
-                             --
-                             avlabel a [] = []
-                             avlabel a (b:bs) =
-                               if (object a /= object b)
-                               then (mkDual b):(avlabel a bs)
-                               else avlabel a bs
-                             --
-                         in (L.and $ L.map (\x -> (length $ actrcv x) < 2)$ M.keys sys)
-                            &&
-                            (
-                              (L.and $ L.map
-                               (\(x,ys) -> findDependence
-                                           ts
-                                           (successor ts (ss,qq) x)
-                                           x
-                                           dependence
-                                           (\z -> z `L.elem` ys)) asends)
-                            )                       
+              avlabel a [] = []
+              avlabel a (b:bs) =
+                if (object a /= object b)
+                then (mkDual b):(avlabel a bs)
+                else avlabel a bs
+                --
+          in (L.and $ L.map (\x -> (length $ actrcv x) < 2)$ M.keys sys)
+             &&
+             (
+               (L.and $ L.map
+                 (\(x,ys) -> findDependence
+                             ts
+                             (successor ts cf x)
+                             x
+                             dependence
+                             (\z -> z `L.elem` ys)) asends)
+             )                       
 
 isBasic :: System -> Bool
 isBasic sys = L.and $ (parMap rpar) testMachine (M.elems sys)
