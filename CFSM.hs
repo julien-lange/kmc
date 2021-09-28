@@ -28,7 +28,7 @@ type System = Map Participant Machine
 type StateMap = Map Participant State
 type QueueMap = Map (Participant, Participant) [Message]
 
-type Configuration = (StateMap, QueueMap)
+type Configuration = ((StateMap, QueueMap), [Label])
 
 type Machine = Automaton State Label
 
