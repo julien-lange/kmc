@@ -155,7 +155,13 @@ iterativeCheck nored d cfsms (bound:xs) =
                     (show bound)++"-C/SIBI OK, "++
                     (show bound)++"-exhaustivity OK, "++                
                     "checking for safety..."
-                  printResult ((show bound)++"-MC: ") (ksafe cfsms ts)
+                  let ks = ksafe cfsms ts                     
+                    in do printResult ((show bound)++"-MC: ") ks
+                          when (d && not ks) $
+                            let (trp, tre) = ksafeTrace cfsms ts
+                            in do putStrLn $ "Traces violating progress: "++(show trp)
+                                  putStrLn $ "Traces violating eventual reception: "++(show tre)
+
           else iterativeCheck nored d cfsms xs
 
 
