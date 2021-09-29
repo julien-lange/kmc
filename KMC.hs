@@ -159,11 +159,19 @@ iterativeCheck nored d cfsms (bound:xs) =
                     in do printResult ((show bound)++"-MC: ") ks
                           when (d && not ks) $
                             let (trp, tre) = ksafeTrace cfsms ts
-                            in do putStrLn $ "Traces violating progress: "++(show trp)
-                                  putStrLn $ "Traces violating eventual reception: "++(show tre)
+                            in do putStrLn $ "Traces violating progress: "++(printList $ printTrace  trp)
+                                  putStrLn $ "Traces violating eventual reception: "++(printList $ printTrace tre)
 
           else iterativeCheck nored d cfsms xs
 
+printLabelK :: Label -> String
+printLabelK (s, r, Send, (msg,pl)) = s++"->"++r++"!"++msg++"<"++pl++">"
+printLabelK (s, r, Receive, (msg,pl)) = s++"->"++r++"?"++msg++"<"++pl++">"
+
+printTrace :: [[Label]] -> [String]
+printTrace xs =  L.map (\x -> intercalate "; " (L.map printLabelK x)) xs
+
+printList xs = "["++(intercalate ", " xs)++"]"
 
 printAll :: Bool -> Bool -> Bool -> Bool -> String -> System -> Int -> IO ()
 printAll cibi debug red flag basename cfsms bound = do
