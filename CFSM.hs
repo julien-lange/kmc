@@ -139,11 +139,11 @@ buildTS k sys = Automaton { states = nub $ concat $ L.map (\x-> [fst x, snd . sn
   where alltrans = nub $ helper [] [] [initConf sys]
         helper acc seen [] = acc
         helper acc seen (x:xs)
-          | (fst x) `elem` seen = helper acc seen xs
+          | x `elem` seen = helper acc seen xs
           | otherwise =
               let next = nextConfiguration k sys x
                   ntrans = L.map (\(l,t) -> (x,(l,t))) next
-              in helper (acc++ntrans) ((fst x):seen) (xs++(L.map snd next))
+              in helper (acc++ntrans) (x:seen) (xs++(L.map snd next))
 
 
 
@@ -168,7 +168,7 @@ buildReduceTS basic k sys = Automaton { states = nub $ concat $ L.map (\x-> [fst
         ntrans = helper [(initConf sys, [])] [] []
         helper [] seen acc =  acc
         helper ((s,todo):ss) seen acc
-          | (fst s) `L.elem` seen = helper ss seen acc
+          | s `L.elem` seen = helper ss seen acc
           | otherwise =
               case todo of
               [] -> case sortBy compareTransitions $
@@ -177,11 +177,11 @@ buildReduceTS basic k sys = Automaton { states = nub $ concat $ L.map (\x-> [fst
                      [] -> helper ss seen acc
                      (h:xs) -> let current = (L.map (\(x,y) -> (s,(x,y))) h)
                                    next = L.map (\(x,y) -> (y,xs)) h
-                               in helper (ss++next) ((fst s):seen) (acc++current)
+                               in helper (ss++next) (s:seen) (acc++current)
         
               (list:rest) -> let current = (L.map (\(x,y) -> (s,(x, (nextConfigurationFixed k sys s x)))) list)
                                  next =  L.map (\(x,y) -> (nextConfigurationFixed k sys s x, rest)) list
-                             in helper (ss++next) ((fst s):seen) (acc++current)
+                             in helper (ss++next) (s:seen) (acc++current)
         
 projectLabel :: Participant -> Label -> Maybe Label
 projectLabel p (s,r,dir,msg)
