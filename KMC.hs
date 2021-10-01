@@ -284,8 +284,8 @@ printInformation debug cibi flag bound cfsms ts =
      printResult (prex++(show bound)++"-exhaustive: ") (kexhaustive cfsms ts)
      printResult (prex++(show bound)++"-safe: ") ks
      when (not ks) $
-       do putStrLn $ "Traces violating progress: "++(show trp)
-          putStrLn $ "Traces violating eventual reception: "++(show tre)
+       do putStrLn $ "Traces violating progress: "++(printList $ printTrace  trp)
+          putStrLn $ "Traces violating eventual reception: "++(printList $ printTrace  tre)
 
 
 compareLTS :: String -> String -> IO Bool
