@@ -225,9 +225,7 @@ findLabel aut s fun gun = helper [] [s]
 
 
 findPathToState  :: (Eq a, Eq b) => Automaton a b -> a -> Maybe [b]
-findPathToState aut s = case helper [] [] (sinit aut) of
-                          Nothing -> Nothing
-                          Just ls -> Just $ L.nub ls
+findPathToState aut s = helper [] [] (sinit aut)
   where helper path seen x 
           | x == s = Just path
           | x `L.elem` seen = Nothing
