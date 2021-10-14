@@ -266,7 +266,7 @@ ksafe sys ts =  L.and $ (parMap rpar) helper (states ts)
              (L.and $ L.map (\x -> findLabel ts cf (x==) (\x->True)) qs) -- evt reception
 
 ksafeTrace :: System -> TS -> ([[Label]],[[Label]])
-ksafeTrace sys ts = (getPaths outProg, getPaths outEvr)
+ksafeTrace sys ts = (getPaths outProg, reverse $ getPaths outEvr)
   where (outProg, outEvr) = unzip $ (parMap rpar) helper (states ts)
         getPaths xs = catMaybes $ L.map (findPathToState ts) (concat xs)
         helper cf@((ss,qq)) =
