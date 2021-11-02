@@ -193,11 +193,11 @@ printAll cibi debug red flag basename cfsms bound = do
     (boundedtsFileName basename bound)
     (printAutomaton printLabel ts)
 
-  printProjectionsDot
-    cfsms
-    ((syncglobalBase basename 0)++"norm-system.dot")
-    ((syncglobalBase basename 0)++"norm-system.png")
-    -- putStrLn $ printSystemToGMC cfsms
+  -- printProjectionsDot
+  --   cfsms
+  --   ((syncglobalBase basename 0)++"norm-system.dot")
+  --   ((syncglobalBase basename 0)++"norm-system.png")
+  --   -- putStrLn $ printSystemToGMC cfsms
 
   
   when flag $ do
