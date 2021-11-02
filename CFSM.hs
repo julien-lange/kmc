@@ -132,7 +132,8 @@ nextConfigurationFixed k sys ((states, queues)) l@(s, r, Receive, msg) =
    in ((M.insert r target states, M.insert (s,r) xs queues))
 
 buildTS :: Int -> System -> TS
-buildTS k sys = Automaton { states = nub $ concat $ L.map (\x-> [fst x, snd . snd $ x]) alltrans
+buildTS k sys = Automaton { states = nub
+                                     $ (initConf sys):(concat $ L.map (\x-> [fst x, snd . snd $ x]) alltrans)
                           , sinit = initConf sys
                           , transitions = alltrans
                           }
@@ -156,10 +157,12 @@ compareTransitions ((x,c):xs) ((y,d):ys)
   | (direction x == Receive) = LT
 
 buildReduceTS :: Bool -> Int -> System -> TS
-buildReduceTS basic k sys = Automaton { states = nub $ concat $ L.map (\x-> [fst x, snd . snd $ x]) ntrans
-                                         , sinit = initConf sys
-                                         , transitions = ntrans
-                                         }
+buildReduceTS basic k sys = Automaton
+                            { states = nub
+                                       $ (initConf sys):(concat $ L.map (\x-> [fst x, snd . snd $ x]) ntrans)
+                            , sinit = initConf sys
+                            , transitions = ntrans
+                            }
   where f (p1,p2,Send,m) (q1,q2,Send,m') = (p1==q1) 
         f (p1,p2,Receive,m) (q1,q2,Receive,m') = (p2==q2)
         f (p1,p2,Send,m) (q1,q2,Receive,m') = (p1==q2)
