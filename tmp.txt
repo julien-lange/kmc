@@ -1,0 +1,3 @@
+A: B?msg;B!msg;end
+B: A?msg;C!msg;end
+C: B?msg;A!msg;end
