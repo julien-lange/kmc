@@ -25,7 +25,7 @@ sudo apt install haskell-platform
 sudo apt install python-matplotlib
 sudo apt install python-scipy
 cabal update
-cabal install cmdargs ansi-terminal parallel split MissingH --lib
+cabal build
 ```
 
 ## Getting started (download and compile)
@@ -33,17 +33,17 @@ cabal install cmdargs ansi-terminal parallel split MissingH --lib
 * Open a terminal
 * Clone the repository: `git clone https://bitbucket.org/julien-lange/kmc-cav19.git`
 * Change direcotry:  `cd kmc-cav19`
-* Compile: `ghc KMC -threaded` and `ghc GenCFSMs`
+* Compile: `cabal build`
 
 ## Usage
 
 ### Usage for k-MC checking:
 
 * **Interactive:** to check for k-MC (of input file):
-  `./KMC <path-to-automata> <k>  +RTS -N<number-of-cpus>`
+  `cabal run KMC -- <path-to-automata> <k>  +RTS -N<number-of-cpus>`
 
 * **Benchmarking:** to find the least k s.t. k-MC holds for input file:
-  `./KMC <path-to-automata> <min-bound> <max-bound> +RTS -N<number-of-cpus>`
+  `cabal run KMC -- <path-to-automata> <min-bound> <max-bound> +RTS -N<number-of-cpus>`
 
 ### Examples
 
@@ -53,7 +53,7 @@ a file containing a) system of communicating automata and a bound `k`.
 Example with k=2
 
 ```
-$ ./KMC tests/benchmarks/gmc-runningexample 2 --fsm
+$ cabal run KMC -- tests/benchmarks/gmc-runningexample 2 --fsm
 CSA: True            			    # The automata are deterministic and have no mixed states (Remark 1)
 reduced 2-OBI: True			    # The automata validate 2-OBI (Def 6)
 reduced 2-SIBI: False			    # The automata validate 2-SIBI (Def 11)
@@ -67,7 +67,7 @@ as it is generally a lot more expensive. It can be activated using the
 `--cibi` flag, e.g.,
 
 ```
-$ ./KMC tests/benchmarks/gmc-runningexample 2 --fsm --cibi
+$ cabal run KMC -- tests/benchmarks/gmc-runningexample 2 --fsm --cibi
 CSA: True
 reduced 2-OBI: True
 reduced 2-SIBI: False		# The automata _do not_ validate 2-SIBI (Def 11)
@@ -85,7 +85,7 @@ automata are not directed). For instance the automata in our running
 example are basic (directed), hence we have:
 
 ```
-$ ./KMC tests/running-example.txt 3 
+$ cabel run KMC -- tests/running-example.txt 3 
 CSA: True
 Basic: True
 reduced 3-exhaustive: True
@@ -102,9 +102,9 @@ generated reduced transition system (RTS).
 
 ### Other usages:
   
-* More information: see `./KMC --help` and `./artifact.md`
+* More information: see `cabal run KMC -- --help` and `./artifact.md`
 
-* To generate examples: `./GenCFSMs <n> <k> <m>` (run `ghc GenCFSMs.hs` first!)
+* To generate examples: `cabal run GenCFSMs -- <n> <k> <m>`
 
 * To run benchmark script for literature examples: `./lit-benchmarks.py`
 
