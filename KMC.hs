@@ -155,9 +155,23 @@ iterativeCheck nored d cfsms (bound:xs) =
                     (show bound)++"-C/SIBI OK, "++
                     (show bound)++"-exhaustivity OK, "++                
                     "checking for safety..."
-                  printResult ((show bound)++"-MC: ") (ksafe cfsms ts)
+                  let ks = ksafe cfsms ts                     
+                    in do printResult ((show bound)++"-MC: ") ks
+                          when (d && not ks) $
+                            let (trp, tre) = ksafeTrace cfsms ts
+                            in do putStrLn $ "Traces violating progress: "++(printList $ printTrace  trp)
+                                  putStrLn $ "Traces violating eventual reception: "++(printList $ printTrace tre)
+
           else iterativeCheck nored d cfsms xs
 
+printLabelK :: Label -> String
+printLabelK (s, r, Send, (msg,pl)) = s++"->"++r++"!"++msg++"<"++pl++">"
+printLabelK (s, r, Receive, (msg,pl)) = s++"->"++r++"?"++msg++"<"++pl++">"
+
+printTrace :: [[Label]] -> [String]
+printTrace xs =  L.map (\x -> intercalate "; " (L.map printLabelK x)) xs
+
+printList xs = "["++(intercalate ", " xs)++"]"
 
 printAll :: Bool -> Bool -> Bool -> Bool -> String -> System -> Int -> IO ()
 printAll cibi debug red flag basename cfsms bound = do
@@ -179,11 +193,11 @@ printAll cibi debug red flag basename cfsms bound = do
     (boundedtsFileName basename bound)
     (printAutomaton printLabel ts)
 
-  printProjectionsDot
-    cfsms
-    ((syncglobalBase basename 0)++"norm-system.dot")
-    ((syncglobalBase basename 0)++"norm-system.png")
-    -- putStrLn $ printSystemToGMC cfsms
+  -- printProjectionsDot
+  --   cfsms
+  --   ((syncglobalBase basename 0)++"norm-system.dot")
+  --   ((syncglobalBase basename 0)++"norm-system.png")
+  --   -- putStrLn $ printSystemToGMC cfsms
 
   
   when flag $ do
@@ -256,6 +270,8 @@ printInformation debug cibi flag bound cfsms ts =
   do printResult "CSA: " (isCSA cfsms)
      let prex = if flag then "" else "reduced "
          sibi = kinputindep True cfsms ts
+         ks = ksafe cfsms ts
+         (trp, tre) = ksafeTrace cfsms ts
      if isBasic cfsms
        then printResult "Basic: " True
        else do printResult (prex++(show bound)++"-OBI: ") $ koutputindep bound cfsms ts
@@ -266,7 +282,10 @@ printInformation debug cibi flag bound cfsms ts =
                when (cibi && not sibi) $ do
                  printResult (prex++(show bound)++"-CIBI: ") $ kinputindepChanSize bound cfsms ts
      printResult (prex++(show bound)++"-exhaustive: ") (kexhaustive cfsms ts)
-     printResult (prex++(show bound)++"-safe: ") (ksafe cfsms ts)
+     printResult (prex++(show bound)++"-safe: ") ks
+     when (not ks) $
+       do putStrLn $ "Traces violating progress: "++(printList $ printTrace  trp)
+          putStrLn $ "Traces violating eventual reception: "++(printList $ printTrace  tre)
 
 
 compareLTS :: String -> String -> IO Bool
