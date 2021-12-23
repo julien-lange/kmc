@@ -3,6 +3,7 @@ module Automata where
 import Data.List as L
 import Data.Map as M
 import Data.Set as S
+import Data.Function (on)
 import Data.Maybe (catMaybes, isJust)
 
 import qualified FiniteStateAutomata as FS
@@ -221,6 +222,17 @@ findLabel aut s fun gun = helper [] [s]
                         in (L.or $ L.map (fun . fst) sc)
                            ||
                            (helper (s:seen) (xs++(L.map snd $ L.filter (\x -> gun (fst x)) sc)))
+
+
+findPathToState  :: (Eq a, Eq b) => Automaton a b -> a -> Maybe [b]
+findPathToState aut s = helper [] [] (sinit aut)
+  where helper path seen x 
+          | x == s = Just path
+          | x `L.elem` seen = Nothing
+          | otherwise = let sc = successors aut x
+                          in case catMaybes (L.map (\(l,s) -> helper (path++[l]) (x:seen) s) sc) of
+                               [] -> Nothing
+                               (p:ps) -> Just (head $ sortBy (compare `on` length) (p:ps))
 
 
         

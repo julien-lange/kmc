@@ -6,7 +6,7 @@ for (( i=1; i<=2; i++))
 		for (( j=1; j<=2; j++))
 			do
 			echo P: $p x  W: $i x  D: $j
-			time ./GenCFSMs $i $j $p | ./KMC /dev/stdin 1 30  --fsm --debug  +RTS -N4 || break 3;
+			time cabal run -v0 GenCFSMs -- $i $j $p | cabal run -v0 KMC -- /dev/stdin 1 30  --fsm --debug  +RTS -N4 || break 3;
 			done
 	done
 	done	
