@@ -453,6 +453,13 @@ dependence c x ys z =  helper x ys z
                             (helper  x ys z)
 
 
+----------------
+
+
+isBounded :: Int -> TS -> Bool
+isBounded k ts = helper (sinit ts) []
+
+
 
 ----------------
 
