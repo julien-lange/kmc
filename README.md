@@ -28,6 +28,18 @@ cabal update
 cabal build
 ```
 
+For Arch users, do NOT use _pacman_ and use those lines instead:
+
+```
+sudo apt install python-matplotlib
+sudo apt install python-scipy
+curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+cabal install cmdargs ansi-terminal parallel split MissingH parsec --only-dependencies
+cabal install cmdargs ansi-terminal parallel split MissingH --lib
+```
+
+Indeed, [the default Arch package for GHC has been broken for some time](https://github.com/github/semantic/issues/109#issuecomment-502778064).
+
 ## Getting started (download and compile)
 
 * Open a terminal
